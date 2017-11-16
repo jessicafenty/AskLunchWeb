@@ -1,11 +1,11 @@
 @extends('adminlte::layouts.app')
 
 @section('htmlheader_title')
-    Funcionários
+    Formas de Pagamentos
 @endsection
 
 @section('contentheader_title')
-    Funcionários
+    Formas de Pagamentos
 @endsection
 
 @section('main-content')
@@ -52,7 +52,7 @@
                             </div>
                         @endif
 
-                        <a href="{{route('funcionario.create')}}" class="btn btn-small btn-primary col-md-12">
+                        <a href="{{route('formapagamento.create')}}" class="btn btn-small btn-primary col-md-12">
                             <i class="fa fa-plus-circle"></i>
                             Novo
                         </a>
@@ -61,7 +61,7 @@
 
                     <div class="box-body">
 
-                        <table class="table table-bordered table-striped" id="tabfuncionarios">
+                        <table class="table table-bordered table-striped" id="tabformapagamentos">
                             <thead>
                                 <tr>
                                     <td class="col-md-4"><strong>Nome</strong></td>
@@ -69,15 +69,15 @@
                                 </tr>
                             </thead>
                                 <tbody>
-                                @foreach($funcionario as $c)
+                                @foreach($formapagamento as $c)
                                     <tr>
-                                        <td>{{$c->nome}}</td>
+                                        <td>{{$c->descricao}}</td>
                                         <td align="right">
-                                            <a href="{{route('funcionario.show',$c->codigo)}}" class="btn btn-small btn-info">
+                                            <a href="{{route('formapagamento.show',$c->codigo)}}" class="btn btn-small btn-info">
                                                 <i class="fa fa-search-plus"></i>
                                                 Detalhes
                                             </a>
-                                            <a href="{{route('funcionario.edit',$c->codigo)}}" class="btn btn-small btn-default" style="background-color: goldenrod;color: white">
+                                            <a href="{{route('formapagamento.edit',$c->codigo)}}" class="btn btn-small btn-default" style="background-color: goldenrod;color: white">
                                                 <i class="fa fa-pencil-square-o"></i>
                                                 Editar
                                             </a>
@@ -95,11 +95,11 @@
                                                         </div>
 
                                                         <div class="modal-body text-center">
-                                                            <p>Deseja realmente excluir o funcionário {{$c->nome}}?</p>
+                                                            <p>Deseja realmente excluir o funcionário {{$c->descricao}}?</p>
                                                         </div>
 
                                                         <div class="modal-footer">
-                                                            {!! Form::open(array('route' => array('funcionario.destroy', $c->codigo), 'method' => 'delete')) !!}
+                                                            {!! Form::open(array('route' => array('formapagamento.destroy', $c->codigo), 'method' => 'delete')) !!}
                                                             {!! csrf_field() !!}
                                                             <button class="btn btn-danger" type="submit">Excluir</button>
                                                             <button class="btn btn-default" type="button" data-dismiss="modal">Cancelar</button>
@@ -127,7 +127,7 @@
 @section('scriptlocal')
     <script type="text/javascript">
       $(document).ready(function () {
-        $('#tabfuncionarios').DataTable( {
+        $('#tabformapagamentos').DataTable( {
           "language": {
             "paginate": {
               "previous": "Anterior",

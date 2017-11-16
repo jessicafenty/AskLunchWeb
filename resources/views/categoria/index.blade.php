@@ -1,11 +1,11 @@
 @extends('adminlte::layouts.app')
 
 @section('htmlheader_title')
-    Funcionários
+    Categorias
 @endsection
 
 @section('contentheader_title')
-    Funcionários
+    Categorias
 @endsection
 
 @section('main-content')
@@ -37,31 +37,30 @@
                         @endif
 
                         @if (Session::has('mensagemErro'))
-                            <div class="col-md-12">
-                                <div class="box alert alert-danger">
-                                    <div class="box-header with-border">
-                                        <h3 class="box-title" style="color:white">{{Session::get('mensagemErro')}}</h3>
-                                        <div class="box-tools pull-right">
-                                            <button type="button" class="btn btn-box-tool"
-                                                    data-widget="remove" data-toggle="tooltip" title="Fechar">
-                                                <i class="fa fa-times"></i>
-                                            </button>
+                                <div class="col-md-12">
+                                    <div class="box alert alert-danger">
+                                        <div class="box-header with-border">
+                                            <h3 class="box-title" style="color:white">{{Session::get('mensagemErro')}}</h3>
+                                            <div class="box-tools pull-right">
+                                                <button type="button" class="btn btn-box-tool"
+                                                        data-widget="remove" data-toggle="tooltip" title="Fechar">
+                                                    <i class="fa fa-times"></i>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
                         @endif
 
-                        <a href="{{route('funcionario.create')}}" class="btn btn-small btn-primary col-md-12">
+                        <a href="{{route('categoria.create')}}" class="btn btn-small btn-primary col-md-12">
                             <i class="fa fa-plus-circle"></i>
                             Novo
                         </a>
-
                     </div>
 
                     <div class="box-body">
 
-                        <table class="table table-bordered table-striped" id="tabfuncionarios">
+                        <table class="table table-bordered table-striped" id="tabcategorias">
                             <thead>
                                 <tr>
                                     <td class="col-md-4"><strong>Nome</strong></td>
@@ -69,15 +68,15 @@
                                 </tr>
                             </thead>
                                 <tbody>
-                                @foreach($funcionario as $c)
+                                @foreach($categoria as $c)
                                     <tr>
-                                        <td>{{$c->nome}}</td>
+                                        <td>{{$c->tamanho}}</td>
                                         <td align="right">
-                                            <a href="{{route('funcionario.show',$c->codigo)}}" class="btn btn-small btn-info">
+                                            <a href="{{route('categoria.show',$c->codigo)}}" class="btn btn-small btn-info">
                                                 <i class="fa fa-search-plus"></i>
                                                 Detalhes
                                             </a>
-                                            <a href="{{route('funcionario.edit',$c->codigo)}}" class="btn btn-small btn-default" style="background-color: goldenrod;color: white">
+                                            <a href="{{route('categoria.edit',$c->codigo)}}" class="btn btn-small btn-default" style="background-color: goldenrod;color: white">
                                                 <i class="fa fa-pencil-square-o"></i>
                                                 Editar
                                             </a>
@@ -91,15 +90,15 @@
 
                                                         <div class="modal-header" style="text-align: left">
                                                             <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                            <h4 class="modal-title"> Excluir Funcionário </h4>
+                                                            <h4 class="modal-title"> Excluir Categoria </h4>
                                                         </div>
 
                                                         <div class="modal-body text-center">
-                                                            <p>Deseja realmente excluir o funcionário {{$c->nome}}?</p>
+                                                            <p>Deseja realmente excluir a categoria {{$c->tamanho}}?</p>
                                                         </div>
 
                                                         <div class="modal-footer">
-                                                            {!! Form::open(array('route' => array('funcionario.destroy', $c->codigo), 'method' => 'delete')) !!}
+                                                            {!! Form::open(array('route' => array('categoria.destroy', $c->codigo), 'method' => 'delete')) !!}
                                                             {!! csrf_field() !!}
                                                             <button class="btn btn-danger" type="submit">Excluir</button>
                                                             <button class="btn btn-default" type="button" data-dismiss="modal">Cancelar</button>
@@ -127,7 +126,7 @@
 @section('scriptlocal')
     <script type="text/javascript">
       $(document).ready(function () {
-        $('#tabfuncionarios').DataTable( {
+        $('#tabcategorias').DataTable( {
           "language": {
             "paginate": {
               "previous": "Anterior",

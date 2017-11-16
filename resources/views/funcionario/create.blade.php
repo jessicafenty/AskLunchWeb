@@ -138,6 +138,9 @@
 
                             <div class="box-footer">
                                 <button type="submit" class="btn btn-success pull-right btn-lg">Salvar</button>
+                                <a href="{{route('funcionario.index')}}" class="btn btn-small btn-primary pull-left btn-lg" style="float: right">
+                                    Voltar
+                                </a>
                             </div>
 
                         </form>

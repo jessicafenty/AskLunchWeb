@@ -40,13 +40,6 @@
                     <span>Funcionários do Restaurante</span>
                 </a>
             </li>
-            {{--<li class="active">--}}
-
-                {{--<a href="#">--}}
-                    {{--<i class="fa fa-address-card"></i>--}}
-                    {{--<span>Endereço do Funcionário</span>--}}
-                {{--</a>--}}
-            {{--</li>--}}
             <li class="active">
 
                 <a href="#">
@@ -56,23 +49,23 @@
             </li>
             <li class="active">
 
-                <a href="#">
+                <a href="{{route('bebida.index')}}">
                     <i class="fa fa-beer"></i>
                     <span>Bebidas do Restaurante</span>
                 </a>
             </li>
             <li class="active">
 
-                <a href="#">
+                <a href="{{route('categoria.index')}}">
                     <i class="fa fa-archive"></i>
-                    <span>Categoria de Marmita</span>
+                    <span>Categorias de Marmitas</span>
                 </a>
             </li>
             <li class="active">
 
-                <a href="#">
+                <a href="{{route('formapagamento.index')}}">
                     <i class="fa fa-credit-card"></i>
-                    <span>Forma de Pagamento</span>
+                    <span>Formas de Pagamentos</span>
                 </a>
             </li>
         </ul><!-- /.sidebar-menu -->

@@ -79,7 +79,6 @@ class FuncionarioController extends Controller
     public function show($id)
     {
         $funcionario = Funcionario::findOrFail($id);
-        //$usuario = Usuario::where('cod_cliente','=',$id)->get();
         return view('funcionario.show', compact('funcionario'));
     }
 
@@ -131,7 +130,7 @@ class FuncionarioController extends Controller
 
         Session::flash('mensagem', 'Funcionário atualizado com sucesso!');
 
-        return redirect('/funcionario/create');
+        return redirect('/funcionario/'.$id.'/edit');
     }
 
     /**

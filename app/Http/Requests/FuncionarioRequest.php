@@ -29,7 +29,7 @@ class FuncionarioRequest extends FormRequest
             'data_nascimento' => 'required',
             'logradouro' => 'required|max:150',
             'bairro' => 'required|max:100',
-            'email' => 'required|max:150|email',
+            'email' => 'required|max:150|email|unique:Usuario,email',
             'senha' => 'required|max:100',
         ];
     }
@@ -44,6 +44,7 @@ class FuncionarioRequest extends FormRequest
             'bairro.required' => 'Favor informar o BAIRRO',
             'email.required' => 'Favor informar o EMAIL',
             'senha.required' => 'Favor informar a SENHA',
+            'email.unique' => 'Email já existente, favor informar outro EMAIL',
         ];
     }
 }

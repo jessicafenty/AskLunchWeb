@@ -65,8 +65,7 @@
                             </div>
 
                         </div>
-                        <a href="{{route('funcionario.index')}}" class="btn btn-small btn-primary" style="float: right">
-                            <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                        <a href="{{route('funcionario.index')}}" class="btn btn-small btn-primary pull-right btn-lg" style="float: right">
                             Voltar
                         </a>
 

@@ -70,8 +70,8 @@
                                     <input type="number" class="form-control input-lg" id="inputQuantidade" name="quantidadeNum"
                                            value="{{preg_replace("/[^0-9]/", "", $bebida->quantidade)}}" placeholder="Quantidade">
                                     <select class="form-control" name="quantidade" id="quantidade">
-                                        <option value="ml" {{ "ml" === (isset($bebida->quantidade) ? $bebida->quantidade : '' ) ? 'selected' : '' }}>ml</option>
-                                        <option value="L" {{ "L" === (isset($bebida->quantidade) ? $bebida->quantidade : '' ) ? 'selected' : '' }}>L</option>
+                                        <option value="ml" {{ "ml" === (strpos($bebida->quantidade, 'ml') ? "ml" : '' ) ? 'selected' : '' }}>ml</option>
+                                        <option value="L" {{ "L" === (strpos($bebida->quantidade, 'L') ? "L" : '' ) ? 'selected' : '' }}>L</option>
                                     </select>
                                 </div>
                             </div>

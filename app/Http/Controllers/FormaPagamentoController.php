@@ -91,8 +91,9 @@ class FormaPagamentoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $count = FormaPagamento::where('descricao',$request->input('descricao'))->count();
-        if($count < 1) {
+        $count = FormaPagamento::where('codigo',$id)
+            ->where('descricao',$request->input('descricao'))->count();
+        if($count == 1) {
             $formapagamento = FormaPagamento::findOrFail($id);
             $formapagamento->descricao = $request->input('descricao');
             if($request->input('status') == "Ativo") {

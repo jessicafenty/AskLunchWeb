@@ -87,8 +87,9 @@ class CategoriaController extends Controller
      */
     public function update(CategoriaRequest $request, $id)
     {
-        $count = Categoria::where('tamanho',$request->input('tamanho'))->count();
-        if($count < 1) {
+        $count = Categoria::where('codigo',$id)
+            ->where('tamanho',$request->input('tamanho'))->count();
+        if($count == 1) {
             $categoria = Categoria::findOrFail($id);
             $categoria->tamanho = $request->input('tamanho');
             $categoria->valor = $request->input('valor');

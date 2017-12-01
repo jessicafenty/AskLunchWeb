@@ -42,9 +42,9 @@
             </li>
             <li class="active">
 
-                <a href="#">
+                <a href="{{route('item.index')}}">
                     <i class="fa fa-cutlery"></i>
-                    <span>Itens da Marmita</span>
+                    <span>Itens das Marmitas</span>
                 </a>
             </li>
             <li class="active">
@@ -67,6 +67,64 @@
                     <i class="fa fa-credit-card"></i>
                     <span>Formas de Pagamentos</span>
                 </a>
+            </li>
+            <li class="active">
+
+                <a href="{{route('relatorios')}}">
+                    <i class="fa fa-file-text"></i>
+                    <span>Relatórios</span>
+                </a>
+            </li>
+            <li class="{{$activePedido or 'treeview'}}">
+
+                <a href="#">
+                    <i class="fa fa-tasks"></i>
+                    <span>Gerenciamento de Pedidos</span>
+                    <i class="fa fa-angle-right pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li class="active">
+                        <a href="{{route('pedido.index')}}">
+                            <i class="fa fa-tasks"></i>
+                            <span>Todos Pedidos</span>
+                        </a>
+                    </li>
+                    <li class="active">
+
+                        <a href="{{route('pedido.recebido')}}">
+                            <i class="fa fa-tasks"></i>
+                            <span>Pedidos Recebidos</span>
+                        </a>
+                    </li>
+                    <li class="active">
+
+                        <a href="{{route('pedidos.prontos')}}">
+                            <i class="fa fa-tasks"></i>
+                            <span>Pedidos Prontos</span>
+                        </a>
+                    </li>
+                    <li class="active">
+
+                        <a href="{{route('pedido.rota')}}">
+                            <i class="fa fa-tasks"></i>
+                            <span>Pedidos em Andamento</span>
+                        </a>
+                    </li>
+                    <li class="active">
+
+                        <a href="{{route('pedidos.finalizados')}}">
+                            <i class="fa fa-tasks"></i>
+                            <span>Pedidos Finalizados</span>
+                        </a>
+                    </li>
+                    <li class="active">
+
+                        <a href="{{route('pedidos.cancelados')}}">
+                            <i class="fa fa-tasks"></i>
+                            <span>Pedidos Cancelados</span>
+                        </a>
+                    </li>
+                </ul>
             </li>
         </ul><!-- /.sidebar-menu -->
     </section>

@@ -42,6 +42,30 @@ Route::group(['middleware' => ['web']], function (){
         Route::resource('categoria', 'CategoriaController');
         Route::resource('formapagamento', 'FormaPagamentoController');
         Route::resource('bebida', 'BebidaController');
+        Route::resource('item', 'ItemController');
+        Route::resource('pedido', 'PedidoController');
+//        Route::get('filtrarStatus/{status}', 'AjaxController@filtrarStatus')->name('filtrar');
+        Route::get('alterarStatus/{id}', 'AjaxController@alterarStatus');
+        Route::get('relatorios', 'RelatorioController@exibirOpcoesRelatorio')->name('relatorios');
+        Route::post('relatorioSelecionado', 'RelatorioController@index');
+//        Route::get('alterarStatusRecebido/{id}', 'AjaxController@alterarStatusRecebido');
+        Route::get('adicionarEntregador/{id}/{entregador}', 'AjaxController@adicionarEntregador')->name('adicionarEntregador');
+        Route::get('itensAtivos',array('as' => 'item.itens', 'uses' => 'ItensController@itensAtivos'));
+        Route::get('pedidosRecebidos',array('as' => 'pedido.recebido', 'uses' => 'AjaxController@selecionarRecebidos'));
+        Route::get('pedidosProntos',array('as' => 'pedidos.prontos', 'uses' => 'AjaxController@selecionarProntos'));
+        Route::get('pedidosProntos/{id}',array('as' => 'pedido.pronto', 'uses' => 'AjaxController@alterarStatusPronto'));
+
+        Route::get('pedidosRecebidos/marmitas/{id}',array('as' => 'pedido.marmitas', 'uses' => 'AjaxController@showMarmitas'));
+        Route::get('itens/{id}', 'AjaxController@showItens');
+
+        Route::get('cancelarPedido/{id}',array('as' => 'pedido.cancelar', 'uses' => 'AjaxController@alterarStatusCancelar'));
+        Route::get('pedidosRota',array('as' => 'pedido.rota', 'uses' => 'AjaxController@selecionarAndamento'));
+        Route::get('pedidosRota/{id}/finalizar',array('as' => 'pedido.finalizar', 'uses' => 'AjaxController@alterarStatusFinalizar'));
+        Route::get('pedidosRota/{id}',array('as' => 'pedido.extraviado', 'uses' => 'AjaxController@alterarStatusExtraviado'));
+        Route::get('pedidosFinalizados',array('as' => 'pedidos.finalizados', 'uses' => 'AjaxController@selecionarFinalizados'));
+        Route::get('pedidosCancelados',array('as' => 'pedidos.cancelados', 'uses' => 'AjaxController@selecionarCancelados'));
+        Route::get('pedidosFinalizados/{id}/restaurar',array('as' => 'pedido.finalizado.restaurar', 'uses' => 'AjaxController@restaurarPedidoFinalizado'));
+        Route::get('pedidosCancelados/{id}/restaurar',array('as' => 'pedido.cancelado.restaurar', 'uses' => 'AjaxController@restaurarPedidoCancelado'));
     });
     Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function (){
         Route::get('/', array('as' => 'dashboard', 'uses' => 'DashboardController@index'));

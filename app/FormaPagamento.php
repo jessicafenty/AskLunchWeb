@@ -10,4 +10,8 @@ class FormaPagamento extends Model
     public $timestamps = false;
     protected $primaryKey = 'codigo';
     protected $table = "Forma_Pagamento";
+
+    public function pedido(){
+        return $this->hasMany('App\Pedido', 'cod_forma_pagamento');
+    }
 }

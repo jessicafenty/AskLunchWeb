@@ -15,4 +15,9 @@ class Funcionario extends Model
     public function usuario(){
         return $this->hasOne('App\Usuario', 'cod_cliente');
     }
+
+    public function pedido(){
+        return $this->hasMany('App\Pedido', 'cod_cliente');
+    }
+
 }

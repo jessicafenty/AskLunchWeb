@@ -9,6 +9,17 @@
  */
 
 /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
+.center td{
+    text-align: center;
+    padding: 15px !important;
+}
+
+.center td:last-child{
+    padding: 8px !important;
+}
+.center td:first-child{
+    text-align: left; !important;
+}
 
 html {
   font-family: sans-serif;

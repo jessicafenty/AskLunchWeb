@@ -88,7 +88,21 @@ class BebidaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $count = Bebida::where('codigo',$id)
+            ->where('descricao',$request->input('descricao'))->count();
+        if($count == 1) {
+            $bebida = Bebida::findOrFail($id);
+            $bebida->descricao = $request->input('descricao');
+            $bebida->quantidade = $request->input('quantidadeNum').$request->input('quantidade');
+            $bebida->valor = $request->input('valor');
+            $bebida->tipo = $request->input('tipo');
+            $bebida->save();
+            Session::flash('mensagem', 'Bebida cadastrada com sucesso!');
+        }else{
+            Session::flash('mensagemErro', 'Não é possível cadastrar bebidas repetidas!');
+        }
+
+        return redirect('/bebida/'.$id.'/edit');
     }
 
     /**

@@ -1,11 +1,11 @@
 @extends('adminlte::layouts.app')
 
 @section('htmlheader_title')
-    Bebidas
+    Itens das Marmitas
 @endsection
 
 @section('contentheader_title')
-    Bebidas
+    Itens das Marmitas
 @endsection
 
 @section('main-content')
@@ -37,46 +37,49 @@
                         @endif
 
                         @if (Session::has('mensagemErro'))
-                                <div class="col-md-12">
-                                    <div class="box alert alert-danger">
-                                        <div class="box-header with-border">
-                                            <h3 class="box-title" style="color:white">{{Session::get('mensagemErro')}}</h3>
-                                            <div class="box-tools pull-right">
-                                                <button type="button" class="btn btn-box-tool"
-                                                        data-widget="remove" data-toggle="tooltip" title="Fechar">
-                                                    <i class="fa fa-times"></i>
-                                                </button>
-                                            </div>
+                            <div class="col-md-12">
+                                <div class="box alert alert-danger">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title" style="color:white">{{Session::get('mensagemErro')}}</h3>
+                                        <div class="box-tools pull-right">
+                                            <button type="button" class="btn btn-box-tool"
+                                                    data-widget="remove" data-toggle="tooltip" title="Fechar">
+                                                <i class="fa fa-times"></i>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
                         @endif
 
-                        <a href="{{route('bebida.create')}}" class="btn btn-small btn-primary col-md-12">
+                        <a href="{{route('item.create')}}" class="btn btn-small btn-primary col-md-12">
                             <i class="fa fa-plus-circle"></i>
                             Novo
                         </a>
+                        <a href="{{route('item.itens')}}" class="btn btn-small btn-info col-md-12">
+                            <i class="fa fa-search-plus"></i>
+                            Visualizar Itens Ativos
+                        </a>
+
                     </div>
 
                     <div class="box-body">
 
-                        <table class="table table-bordered table-striped" id="tabbebidas">
+                        <table class="table table-bordered table-striped" id="tabitens">
                             <thead>
                                 <tr align="center">
                                     <td class="col-md-4"><strong>Descrição</strong></td>
+                                    <td class="col-md-2"><strong>Status</strong></td>
                                     <td class="col-md-4" align="center"><strong>Ações</strong></td>
                                 </tr>
                             </thead>
                                 <tbody>
-                                @foreach($bebida as $c)
+                                @foreach($item as $c)
                                     <tr>
                                         <td>{{$c->descricao}}</td>
+                                        <td align="center" id="tdcheck"><input name="status" type="checkbox" id="{{$c->codigo}}" value="Ativo" {{ "Ativo" === (isset($c->status_item) ? $c->status_item : '' ) ? 'checked' : '' }}></td>
                                         <td align="right">
-                                            <a href="{{route('bebida.show',$c->codigo)}}" class="btn btn-small btn-info">
-                                                <i class="fa fa-search-plus"></i>
-                                                Detalhes
-                                            </a>
-                                            <a href="{{route('bebida.edit',$c->codigo)}}" class="btn btn-small btn-default" style="background-color: goldenrod;color: white">
+                                            <a href="{{route('item.edit',$c->codigo)}}" class="btn btn-small btn-default" style="background-color: goldenrod;color: white">
                                                 <i class="fa fa-pencil-square-o"></i>
                                                 Editar
                                             </a>
@@ -90,15 +93,15 @@
 
                                                         <div class="modal-header" style="text-align: left">
                                                             <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                            <h4 class="modal-title"> Excluir bebida </h4>
+                                                            <h4 class="modal-title"> Excluir Funcionário </h4>
                                                         </div>
 
                                                         <div class="modal-body text-center">
-                                                            <p>Deseja realmente excluir a bebida {{$c->descricao}}?</p>
+                                                            <p>Deseja realmente excluir o funcionário {{$c->descricao}}?</p>
                                                         </div>
 
                                                         <div class="modal-footer">
-                                                            {!! Form::open(array('route' => array('bebida.destroy', $c->codigo), 'method' => 'delete')) !!}
+                                                            {!! Form::open(array('route' => array('item.destroy', $c->codigo), 'method' => 'delete')) !!}
                                                             {!! csrf_field() !!}
                                                             <button class="btn btn-danger" type="submit">Excluir</button>
                                                             <button class="btn btn-default" type="button" data-dismiss="modal">Cancelar</button>
@@ -126,7 +129,14 @@
 @section('scriptlocal')
     <script type="text/javascript">
       $(document).ready(function () {
-        $('#tabbebidas').DataTable( {
+          $('tbody :checkbox').click(function () {
+              $.ajax({
+                  url:'../alterarStatus/'+$("td input").attr("id"),
+                  type:'GET',
+                  dataType:'json'
+              });
+          });
+        $('#tabitens').DataTable( {
           "language": {
             "paginate": {
               "previous": "Anterior",

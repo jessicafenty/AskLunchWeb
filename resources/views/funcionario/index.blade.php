@@ -63,7 +63,7 @@
 
                         <table class="table table-bordered table-striped" id="tabfuncionarios">
                             <thead>
-                                <tr>
+                                <tr align="center">
                                     <td class="col-md-4"><strong>Nome</strong></td>
                                     <td class="col-md-4" align="center"><strong>Ações</strong></td>
                                 </tr>

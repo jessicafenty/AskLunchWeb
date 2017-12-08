@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 
+use App\FormaPagamento;
 use App\Funcionario;
 use App\Pedido;
 use App\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\View;
 
 class PedidoController extends Controller
@@ -20,7 +22,8 @@ class PedidoController extends Controller
     public function index()
     {
 //        $pedido = Pedido::all();
-        $pedido = Pedido::where(DB::raw('DATE(data_pedido)'), '=', date("Y-m-d"))->get();
+        $pedido = Pedido::where(DB::raw('DATE(data_pedido)'), '=', date("Y-m-d"))
+            ->where('inativo', '=', '0')->get();
         $entregador = DB::table('Usuario')
             ->join('Cliente', 'Usuario.cod_cliente', '=', 'Cliente.codigo')
             ->select('Cliente.nome')
@@ -40,7 +43,10 @@ class PedidoController extends Controller
      */
     public function create()
     {
-        //
+        $pedido = Pedido::all();
+        $formapagamento = FormaPagamento::all();
+        $cliente = Funcionario::all();
+        return view('pedido.create', compact('pedido', 'formapagamento', 'cliente'));
     }
 
     /**
@@ -51,7 +57,36 @@ class PedidoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $pedido = new Pedido();
+        if($request->input('codigo') !=null){
+            if($request->input('codigo') == 0) {
+                $pedido->entrega = 0;
+                $pedido->horario = $request->input('horas') .":". $request->input('minutos').":00";
+//                echo $pedido->logradouro;
+            }else{
+                $pedido->entrega = 1;
+                $pedido->horario = "00:00:00";
+            }
+            date_default_timezone_set('America/Sao_Paulo');
+            $data = date("Y-m-d H:i:s");
+            $pedido->data_pedido = $data;
+            $pedido->troco = $request->troco;
+            $pedido->cod_forma_pagamento = $request->input('pagamento');
+            $pedido->cod_cliente = $request->input('cliente');
+            $pedido->logradouro = $request->logradouro;
+            $pedido->bairro = $request->bairro;
+            $pedido->numero = $request->numero;
+            $pedido->quadra = $request->quadra;
+            $pedido->lote = $request->lote;
+            $pedido->coordenadas = $request->input('coordenadas');
+            $pedido->status = "Recebido";
+            $pedido->entregador = "Padrão";
+            $pedido->save();
+            Session::flash('mensagem', 'Pedido cadastrado com sucesso!');
+        }else{
+            Session::flash('mensagemErro', 'Favor escolher uma OPÇÃO!');
+        }
+        return redirect('/pedido/create');
     }
 
     /**
@@ -82,7 +117,13 @@ class PedidoController extends Controller
      */
     public function edit($id)
     {
-        //
+        $pedido = Pedido::findOrFail($id);
+        $formapagamento = FormaPagamento::all();
+        $cliente = Funcionario::all();
+        $horario = explode(":", $pedido->horario);
+        $horas = (int) $horario[0];
+        $minutos = (int) $horario[1];
+        return view('pedido.edit', compact('pedido','formapagamento', 'cliente', 'horas', 'minutos'));
     }
 
     /**
@@ -94,7 +135,36 @@ class PedidoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $pedido = Pedido::findOrFail($id);
+        if($request->input('codigo') !=null){
+            if($request->input('codigo') == 0) {
+                $pedido->entrega = 0;
+                $pedido->horario = $request->input('horas') .":". $request->input('minutos').":00";
+//                echo $pedido->logradouro;
+            }else{
+                $pedido->entrega = 1;
+                $pedido->horario = "00:00:00";
+            }
+            date_default_timezone_set('America/Sao_Paulo');
+            $data = date("Y-m-d H:i:s");
+            $pedido->data_pedido = $data;
+            $pedido->troco = $request->troco;
+            $pedido->cod_forma_pagamento = $request->input('pagamento');
+            $pedido->cod_cliente = $request->input('cliente');
+            $pedido->logradouro = $request->logradouro;
+            $pedido->bairro = $request->bairro;
+            $pedido->numero = $request->numero;
+            $pedido->quadra = $request->quadra;
+            $pedido->lote = $request->lote;
+            $pedido->coordenadas = $request->input('coordenadas');
+            $pedido->status = "Recebido";
+            $pedido->entregador = "Padrão";
+            $pedido->update();
+            Session::flash('mensagem', 'Pedido atualizado com sucesso!');
+        }else{
+            Session::flash('mensagemErro', 'Favor escolher uma OPÇÃO!');
+        }
+        return redirect('/pedido/'.$id.'/edit');
     }
 
     /**
@@ -105,6 +175,11 @@ class PedidoController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $pedido = Pedido::findOrFail($id);
+        $pedido->inativo = 1;
+        $pedido->update();
+        Session::flash('mensagem', 'Pedido excluído com sucesso!');
+
+        return redirect('/pedido');
     }
 }

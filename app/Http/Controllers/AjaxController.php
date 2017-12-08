@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Categoria;
 use App\Item;
 use App\Pedido;
 use Illuminate\Http\Request;
@@ -23,6 +24,7 @@ class AjaxController extends Controller
     public function selecionarRecebidos()
     {
         $pedido = Pedido::where('status', '=', 'Recebido')
+            ->where('inativo', '=', '0')
             ->where(DB::raw('DATE(data_pedido)'), '=', date("Y-m-d"))
             ->get();
 //        return view('pedido.recebido', compact('pedido'));
@@ -33,6 +35,7 @@ class AjaxController extends Controller
     public function selecionarAndamento()
     {
         $pedido = Pedido::where('status', '=', 'Em Rota')
+            ->where('inativo', '=', '0')
             ->where(DB::raw('DATE(data_pedido)'), '=', date("Y-m-d"))
             ->get();
 //        return view('pedido.rota', compact('pedido'));
@@ -43,6 +46,7 @@ class AjaxController extends Controller
     public function selecionarFinalizados()
     {
         $pedido = Pedido::where('status', '=', 'Finalizado')
+            ->where('inativo', '=', '0')
             ->where(DB::raw('DATE(data_pedido)'), '=', date("Y-m-d"))
             ->get();
 //        return view('pedido.finalizado', compact('pedido'));
@@ -53,6 +57,7 @@ class AjaxController extends Controller
     public function selecionarCancelados()
     {
         $pedido = Pedido::where('status', '=', 'Cancelado')
+            ->where('inativo', '=', '0')
             ->where(DB::raw('DATE(data_pedido)'), '=', date("Y-m-d"))
             ->get();
 //        return view('pedido.cancelado', compact('pedido'));
@@ -106,8 +111,10 @@ class AjaxController extends Controller
     }
     public function selecionarProntos()
     {
-        $pedido = Pedido::where('status', '=', 'Pronto')->where('entrega', '=', 1)
+        $pedido = Pedido::where('status', '=', 'Pronto')
+//            ->where('entrega', '=', 1)
             ->where('entregador', '=', 'Padrão')
+            ->where('inativo', '=', '0')
             ->where(DB::raw('DATE(data_pedido)'), '=', date("Y-m-d"))
             ->get();
         $entregador = DB::table('Usuario')
@@ -150,6 +157,61 @@ WHERE DATE (Pedido.data_pedido) = '".$data."' AND Cliente.codigo = ".$codCliente
 FROM Item INNER JOIN Item_Marmita ON (Item.codigo = Item_Marmita.cod_item)
 WHERE Item_Marmita.cod_marmita = ".$id." ORDER BY Item.descricao"));
         return response()->json(json_encode($itens));
+    }
+
+    public function alterarValor(Request $request)
+    {
+        $categoria1 = Categoria::findOrFail($request->input('codigoGrande'));
+        $categoria1->valor = $request->input('novoValorGrande');
+        $categoria1->update();
+        $categoria2 = Categoria::findOrFail($request->input('codigoPequena'));
+        $categoria2->valor = $request->input('novoValorPequena');
+        $categoria2->update();
+        return redirect('categoria');
+    }
+
+    public function trazerEndereco($id)
+    {
+        $endereco = DB::select(DB::raw("SELECT logradouro, bairro, numero, quadra, lote, coordenadas FROM Cliente WHERE inativo = 0 AND codigo = ".$id));
+        return response()->json(json_encode($endereco));
+    }
+    public function trazerEnderecoPedido($id)
+    {
+        $endereco = DB::select(DB::raw("SELECT logradouro, bairro, numero, quadra, lote, coordenadas FROM Pedido WHERE cod_cliente = ".$id));
+        return response()->json(json_encode($endereco));
+    }
+    public function recriarPedido($id)
+    {
+        $pedido = Pedido::findOrFail($id);
+        $novoPedido = new Pedido();
+        $novoPedido->data_pedido = $pedido->data_pedido;
+        $novoPedido->troco = $pedido->troco;
+        $novoPedido->cod_forma_pagamento = $pedido->cod_forma_pagamento;
+        $novoPedido->cod_cliente = $pedido->cod_cliente;
+        $novoPedido->logradouro = $pedido->logradouro;
+        $novoPedido->bairro = $pedido->bairro;
+        $novoPedido->numero = $pedido->numero;
+        $novoPedido->quadra = $pedido->quadra;
+        $novoPedido->lote = $pedido->lote;
+        $novoPedido->coordenadas = $pedido->coordenadas;
+        $novoPedido->status = "Recebido";
+        $novoPedido->entregador = "Padrão";
+        $novoPedido->entrega = $pedido->entrega;
+        $novoPedido->horario = $pedido->horario;
+        $novoPedido->save();
+        Pedido::where('codigo', $id)->update(['status' => 'Extraviado Recriado']);
+        return redirect('pedidosExtraviados');
+    }
+    public function selecionarExtraviados()
+    {
+        $pedido = Pedido::where('status', '=', 'Extraviado')
+            ->where('inativo', '=', '0')
+            ->where(DB::raw('DATE(data_pedido)'), '=', date("Y-m-d"))
+            ->get();
+
+        return View::make('pedido.extraviado')
+            ->with('activePedido','active treeview')
+            ->with('pedido',$pedido);
     }
 
 

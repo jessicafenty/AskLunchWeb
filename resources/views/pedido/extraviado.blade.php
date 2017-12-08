@@ -8,9 +8,6 @@
     Gerenciamento de Pedidos
 @endsection
 
-
-
-
 @section('main-content')
 
     <div class="container-fluid spark-screen">
@@ -62,54 +59,28 @@
 
 
 
-                        <table class="table table-bordered table-striped" id="tabpedidosprontos">
+                        <table class="table table-bordered table-striped" id="tabpedidosfinalizados">
                             <thead>
                                 <tr align="center">
                                     <td class="col-md-4" align="center"><strong>Cliente</strong></td>
                                     <td class="col-md-1" align="center"><strong>Entrega</strong></td>
                                     <td class="col-md-1" align="center"><strong>Horário</strong></td>
                                     <td class="col-md-1" align="center"><strong>Status</strong></td>
-                                    <td class="col-md-4" align="center"><strong>Ações</strong></td>
+                                    <td class="col-md-2" align="center"><strong>Ações</strong></td>
                                 </tr>
                             </thead>
                                 <tbody>
                                 @foreach($pedido as $c)
                                     <tr class="center">
                                         <td>{{$c->funcionario->nome}}</td>
-                                        <td>{{$c->entrega === 1 ? 'Sim' : 'Não'}}</td>
-                                        <td>{{$c->horario === '00:00:00' ? '-' : $c->horario}}</td>
+                                        <td align="center">{{$c->entrega === 1 ? 'Sim' : 'Não'}}</td>
+                                        <td align="center">{{$c->horario === '00:00:00' ? '-' : $c->horario}}</td>
                                         <td>{{$c->status}}</td>
                                         <td align="right">
-                                            @if($c->horario === '00:00:00')
-                                            <div class="col-md-8">
-                                                <select class="form-control" name="entregador" id="{{$c->codigo}}">
-                                                    <option selected disabled>Selecione o Entregador</option>
-                                                    @foreach($entregador as $e)
-                                                        <option value="{{$e->nome}}" {{ $e->nome === (isset($c->entregador) ? $c->entregador : '' ) ? 'selected' : '' }}>{{$e->nome}}</option>--}
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            @elseif($c->horario !== '00:00:00')
-                                                <div class="col-md-8">
-                                                    <a href="{{route('pedido.finalizar',$c->codigo)}}" class="form-control btn btn-small btn-success">
-                                                        {{--<i class="fa fa-check-circle-o"></i>--}}
-                                                        Finalizar
-                                                    </a>
-                                                </div>
-                                            @else
-                                            @endif
-
-                                            <div class="col-md-4">
-                                                <a href="{{route('pedido.cancelar',$c->codigo)}}" class="btn btn-small btn-danger form-control">
-                                                    <i class="fa fa-ban"></i>
-                                                    Cancelar
-                                                </a>
-                                            </div>
-
-                                            {{--<a href="#" class="btn btn-small btn-success">--}}
-                                                {{--<i class="fa fa-minus-square"></i>--}}
-                                                {{--Finalizar--}}
-                                            {{--</a>--}}
+                                            <a href="{{route('pedido.extraviado.recriar',$c->codigo)}}" class="btn btn-small btn-success">
+                                                {{--<i class="fa fa-check-circle-o"></i>--}}
+                                                Recriar Pedido
+                                            </a>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -128,7 +99,7 @@
     <script type="text/javascript">
       $(document).ready(function () {
 
-          $('#tabpedidosprontos').DataTable( {
+          $('#tabpedidosfinalizados').DataTable( {
               "language": {
                   "paginate": {
                       "previous": "Anterior",
@@ -150,18 +121,13 @@
 //                  dataType:'json'
 //              });
 //          });
-          $('select[name="entregador"]').change(function(){
-              $.ajax({
-                  url:'../adicionarEntregador/'+$(this).attr('id')+'/'+$(this).find('option:selected').attr("value"),
-                  type:'GET',
-                  dataType:'json',
-                  success: function(result) {
-//                      if(result === "no_errors") location.href = jQuery.parseJSON(result);
-
-                      window.location.href = jQuery.parseJSON(result);
-                  }
-              });
-         });
+//          $('select[name="entregador"]').change(function(){
+//              $.ajax({
+//                  url:'../adicionarEntregador/'+$(this).attr('id')+'/'+$(this).find('option:selected').attr("value"),
+//                  type:'GET',
+//                  dataType:'json'
+//              });
+//         });
 
       });
     </script>

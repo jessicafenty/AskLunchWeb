@@ -50,7 +50,7 @@
                                             <option value="Aniversariantes">Aniversariantes de um mês específico</option>
                                             <option value="totalMarmitasMes">Total de marmitas vendidas de um mês específico</option>
                                             <option value="totalMarmitasDia">Total de vendas de marmitas do dia</option>
-                                            <option value="marmitasCliente">Descrição de marmitas dos clientes</option>
+                                            {{--<option value="marmitasCliente">Descrição de marmitas dos clientes</option>--}}
                                         </select>
                                     </div>
                                 </div>
@@ -138,11 +138,11 @@
                     $('#dataFinal').attr('disabled', 'disabled');
                     $('#mes').attr('disabled', 'disabled');
                 }
-                if (str.localeCompare("marmitasCliente")===0){
-                    $('#dataInicial').attr('disabled', 'disabled');
-                    $('#dataFinal').attr('disabled', 'disabled');
-                    $('#mes').attr('disabled', 'disabled');
-                }
+//                if (str.localeCompare("marmitasCliente")===0){
+//                    $('#dataInicial').attr('disabled', 'disabled');
+//                    $('#dataFinal').attr('disabled', 'disabled');
+//                    $('#mes').attr('disabled', 'disabled');
+//                }
             });
         });
     </script>

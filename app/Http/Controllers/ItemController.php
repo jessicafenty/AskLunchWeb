@@ -16,7 +16,7 @@ class ItemController extends Controller
      */
     public function index()
     {
-        $item = Item::all();
+        $item = Item::where('inativo', '=', '0')->get();
         return view('item.index', compact('item'));
     }
 
@@ -90,21 +90,16 @@ class ItemController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $count = Item::where('codigo',$id)
-            ->where('descricao',$request->input('descricao'))->count();
-        if($count == 1) {
-            $item = Item::findOrFail($id);
-            $item->descricao = $request->input('descricao');
-            if($request->input('status') == "Ativo") {
-                $item->status_item = $request->input('status');
-            }else{
-                $item->status_item = "Inativo";
-            }
-            $item->save();
-            Session::flash('mensagem', 'Item cadastrado com sucesso!');
+
+        $item = Item::findOrFail($id);
+        $item->descricao = $request->input('descricao');
+        if($request->input('status') == "Ativo") {
+            $item->status_item = $request->input('status');
         }else{
-            Session::flash('mensagemErro', 'Não é possível cadastrar itens repetidos!');
+            $item->status_item = "Inativo";
         }
+        $item->update();
+        Session::flash('mensagem', 'Item cadastrado com sucesso!');
 
         return redirect('/item/'.$id.'/edit');
     }
@@ -117,15 +112,11 @@ class ItemController extends Controller
      */
     public function destroy($id)
     {
-        $query = DB::table('Item_Marmita')->where('cod_item', $id)->count();
+        $item = Item::findOrFail($id);
+        $item->inativo = 1;
+        $item->update();
+        Session::flash('mensagem', 'Item excluído com sucesso!');
 
-        if($query == 0){
-            $item = Item::findOrFail($id);
-            $item->delete();
-            Session::flash('mensagem', 'Item excluído com sucesso!');
-        }else{
-            Session::flash('mensagemErro', 'Não foi possível excluir o item selecionado pois este possui marmitas vinculadas a ele!');
-        }
         return redirect('/item');
     }
 }

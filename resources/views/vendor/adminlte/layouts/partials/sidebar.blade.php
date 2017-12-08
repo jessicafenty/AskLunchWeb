@@ -124,6 +124,13 @@
                             <span>Pedidos Cancelados</span>
                         </a>
                     </li>
+                    <li class="active">
+
+                        <a href="{{route('pedidos.extraviados')}}">
+                            <i class="fa fa-tasks"></i>
+                            <span>Pedidos Extraviados</span>
+                        </a>
+                    </li>
                 </ul>
             </li>
         </ul><!-- /.sidebar-menu -->

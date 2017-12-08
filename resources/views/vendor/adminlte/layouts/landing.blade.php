@@ -12,7 +12,47 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
 
     <link href='https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Raleway:400,300,700' rel='stylesheet' type='text/css'>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <style>
+        .mySlides {
+            display:none;
+        }
+        .myDiv{
+            position:fixed;
+            width: 100%;
+            height: 40%;
+            bottom: 500px;
+        }
 
+        div img {
+            display: block;
+            width: 100%;
+            height:800px;
+        }
+
+    </style>
+    <script type="text/javascript">
+        jQuery(document).ready(function () {
+            var slideIndex = 0;
+            carousel();
+
+            function carousel() {
+                var i;
+                var x = document.getElementsByClassName("mySlides");
+                for (i = 0; i < x.length; i++) {
+                    x[i].style.display = "none";
+                }
+                slideIndex++;
+                if (slideIndex > x.length) {slideIndex = 1}
+                x[slideIndex-1].style.display = "block";
+                setTimeout(carousel, 2000); // Change image every 2 seconds
+            }
+
+
+        });
+    </script>
 </head>
 
 <body data-spy="scroll" data-target="#navigation" data-offset="50">
@@ -36,6 +76,18 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
             </div><!--/.nav-collapse -->
         </div>
     </div>
+
+    {{--<h2 class="w3-center">AskLunch</h2>--}}
+
+    <div class="myDiv">
+        <img class="mySlides" src="{{URL::asset('/images/delivery.jpg')}}">
+        <img class="mySlides" src="{{URL::asset('/images/comida.jpg')}}">
+        <img class="mySlides" src="{{URL::asset('/images/prato.jpg')}}">
+    </div>
+
+
+
+
 
 
     <footer class="navbar navbar-default navbar-fixed-bottom">

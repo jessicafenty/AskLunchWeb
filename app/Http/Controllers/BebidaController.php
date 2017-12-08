@@ -16,7 +16,7 @@ class BebidaController extends Controller
      */
     public function index()
     {
-        $bebida = Bebida::all();
+        $bebida = Bebida::where('inativo', '=', '0')->get();
         return view('bebida.index', compact('bebida'));
     }
 
@@ -52,7 +52,7 @@ class BebidaController extends Controller
             Session::flash('mensagemErro', 'Não é possível cadastrar bebidas repetidas!');
         }
 
-        return redirect('/categoria/create');
+        return redirect('/bebida');
     }
 
     /**
@@ -88,19 +88,15 @@ class BebidaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $count = Bebida::where('codigo',$id)
-            ->where('descricao',$request->input('descricao'))->count();
-        if($count == 1) {
-            $bebida = Bebida::findOrFail($id);
-            $bebida->descricao = $request->input('descricao');
-            $bebida->quantidade = $request->input('quantidadeNum').$request->input('quantidade');
-            $bebida->valor = $request->input('valor');
-            $bebida->tipo = $request->input('tipo');
-            $bebida->save();
-            Session::flash('mensagem', 'Bebida cadastrada com sucesso!');
-        }else{
-            Session::flash('mensagemErro', 'Não é possível cadastrar bebidas repetidas!');
-        }
+
+        $bebida = Bebida::findOrFail($id);
+        $bebida->descricao = $request->input('descricao');
+        $bebida->quantidade = $request->input('quantidadeNum').$request->input('quantidade');
+        $bebida->valor = $request->input('valor');
+        $bebida->tipo = $request->input('tipo');
+        $bebida->update();
+        Session::flash('mensagem', 'Bebida cadastrada com sucesso!');
+
 
         return redirect('/bebida/'.$id.'/edit');
     }
@@ -113,15 +109,11 @@ class BebidaController extends Controller
      */
     public function destroy($id)
     {
-        $query = DB::table('Bebida_Venda')->where('cod_bebida', $id)->count();
+        $bebida = Bebida::findOrFail($id);
+        $bebida->inativo = 1;
+        $bebida->update();
+        Session::flash('mensagem', 'Bebida excluída com sucesso!');
 
-        if($query == 0){
-            $bebida = Bebida::findOrFail($id);
-            $bebida->delete();
-            Session::flash('mensagem', 'Bebida excluída com sucesso!');
-        }else{
-            Session::flash('mensagemErro', 'Não foi possível excluir a bebida selecionada pois esta possui vendas vinculadas a ela!');
-        }
         return redirect('/bebida');
     }
 }

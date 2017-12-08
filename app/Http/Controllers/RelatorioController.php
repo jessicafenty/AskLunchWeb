@@ -67,18 +67,18 @@ FROM Pedido INNER JOIN Marmita ON (Pedido.codigo = Marmita.cod_pedido) WHERE Ped
             $pdf = PDF::loadView('relatorio.marmitasDia', compact('marmitas'), compact('mesRelatorio'));
             return $pdf->stream();
         }
-        if(strcmp($request->input('relatorio'), "marmitasCliente")==0){
-            $marmitas = DB::select(DB::raw("SELECT Pedido.codigo AS Codigo_Pedido, Marmita.codigo AS Codigo_Marmita, Cliente.nome, Categoria_Marmita.tamanho, Item.descricao 
-FROM Cliente INNER JOIN Pedido ON (Cliente.codigo = Pedido.cod_cliente) 
-INNER JOIN Marmita ON (Pedido.codigo = Marmita.cod_pedido) 
-INNER JOIN Item_Marmita ON (Marmita.codigo = Item_Marmita.cod_marmita) 
-INNER JOIN Item ON (Item_Marmita.cod_item = Item.codigo) 
-INNER JOIN Categoria_Marmita ON (Marmita.cod_categoria = Categoria_Marmita.codigo) 
-GROUP BY Codigo_Pedido, Codigo_Marmita, Cliente.nome, Categoria_Marmita.tamanho, Item.descricao"));
-
-            $pdf = PDF::loadView('relatorio.marmitasCliente', compact('marmitas'));
-            return $pdf->stream();
-        }
+//        if(strcmp($request->input('relatorio'), "marmitasCliente")==0){
+//            $marmitas = DB::select(DB::raw("SELECT Pedido.codigo AS Codigo_Pedido, Marmita.codigo AS Codigo_Marmita, Cliente.nome, Categoria_Marmita.tamanho, Item.descricao
+//FROM Cliente INNER JOIN Pedido ON (Cliente.codigo = Pedido.cod_cliente)
+//INNER JOIN Marmita ON (Pedido.codigo = Marmita.cod_pedido)
+//INNER JOIN Item_Marmita ON (Marmita.codigo = Item_Marmita.cod_marmita)
+//INNER JOIN Item ON (Item_Marmita.cod_item = Item.codigo)
+//INNER JOIN Categoria_Marmita ON (Marmita.cod_categoria = Categoria_Marmita.codigo)
+//GROUP BY Codigo_Pedido, Codigo_Marmita, Cliente.nome, Categoria_Marmita.tamanho, Item.descricao"));
+//
+//            $pdf = PDF::loadView('relatorio.marmitasCliente', compact('marmitas'));
+//            return $pdf->stream();
+//        }
     }
     public function exibirOpcoesRelatorio(){
         return view('relatorio.index');

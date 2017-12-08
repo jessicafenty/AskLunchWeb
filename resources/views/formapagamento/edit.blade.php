@@ -56,13 +56,20 @@
                             <input type="hidden" name="_method" value="PUT">
                             {{csrf_field()}}
 
+                            {{--<div class="form-group">--}}
+                                {{--<label for="idDescricao" class="control-label col-sm-2">Descrição</label>--}}
+                                {{--<div class="col-md-10">--}}
+                                    {{--<select class="form-control" name="descricao" id="descricao">--}}
+                                        {{--<option value="Dinheiro" {{ "Dinheiro" === (isset($formapagamento->descricao) ? $formapagamento->descricao : '' ) ? 'selected' : '' }}>Dinheiro</option>--}}
+                                        {{--<option value="Cartão de Crédito" {{ "Cartão de Crédito" === (isset($formapagamento->descricao) ? $formapagamento->descricao : '' ) ? 'selected' : '' }}>Cartão de Crédito</option>--}}
+                                    {{--</select>--}}
+                                {{--</div>--}}
+                            {{--</div>--}}
                             <div class="form-group">
-                                <label for="idDescricao" class="control-label col-sm-2">Descrição</label>
-                                <div class="col-md-10">
-                                    <select class="form-control" name="descricao" id="descricao">
-                                        <option value="Dinheiro" {{ "Dinheiro" === (isset($formapagamento->descricao) ? $formapagamento->descricao : '' ) ? 'selected' : '' }}>Dinheiro</option>
-                                        <option value="Cartão de Crédito" {{ "Cartão de Crédito" === (isset($formapagamento->descricao) ? $formapagamento->descricao : '' ) ? 'selected' : '' }}>Cartão de Crédito</option>
-                                    </select>
+                                <label for="inputFormPag" class="col-sm-2 control-label">Descrição</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control input-lg" id="inputFormPag" name="formapagamento"
+                                           value="{{$formapagamento->descricao}}">
                                 </div>
                             </div>
 

@@ -16,7 +16,7 @@ class FormaPagamentoController extends Controller
      */
     public function index()
     {
-        $formapagamento = FormaPagamento::all();
+        $formapagamento = FormaPagamento::where('inativo', '=', '0')->get();
         return view('formapagamento.index', compact('formapagamento'));
     }
 
@@ -39,23 +39,23 @@ class FormaPagamentoController extends Controller
      */
     public function store(Request $request)
     {
-        $count = FormaPagamento::where('descricao',$request->input('descricao'))->count();
-        if($count < 1) {
-            $formapagamento = new FormaPagamento();
-            $formapagamento->descricao = $request->input('descricao');
-            if($request->input('status') == "Ativo") {
-                $formapagamento->status = $request->input('status');
-            }else{
-                $formapagamento->status = "Inativo";
+        if($request->input('formapagamento') != null) {
+            $count = FormaPagamento::where('descricao', $request->input('formapagamento'))->count();
+            if ($count < 1) {
+                $formapagamento = new FormaPagamento();
+                $formapagamento->descricao = $request->formapagamento;
+                if ($request->input('status') == "Ativo") {
+                    $formapagamento->status = $request->input('status');
+                } else {
+                    $formapagamento->status = "Inativo";
+                }
+                $formapagamento->save();
+                Session::flash('mensagem', 'Forma de Pagamento cadastrada com sucesso!');
+            } else {
+                Session::flash('mensagemErro', 'Não é possível cadastrar formas de pagamentos repetidas!');
             }
-            $formapagamento->save();
-            Session::flash('mensagem', 'Forma de Pagamento cadastrada com sucesso!');
-        }else{
-            Session::flash('mensagemErro', 'Não é possível cadastrar formas de pagamentos repetidas!');
         }
-
         return redirect('/formapagamento/create');
-
     }
 
     /**
@@ -91,22 +91,17 @@ class FormaPagamentoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $count = FormaPagamento::where('codigo',$id)
-            ->where('descricao',$request->input('descricao'))->count();
-        if($count == 1) {
+        if($request->input('formapagamento') != null) {
             $formapagamento = FormaPagamento::findOrFail($id);
-            $formapagamento->descricao = $request->input('descricao');
-            if($request->input('status') == "Ativo") {
+            $formapagamento->descricao = $request->formapagamento;
+            if ($request->input('status') == "Ativo") {
                 $formapagamento->status = $request->input('status');
-            }else{
+            } else {
                 $formapagamento->status = "Inativo";
             }
-            $formapagamento->save();
+            $formapagamento->update();
             Session::flash('mensagem', 'Forma de Pagamento cadastrada com sucesso!');
-        }else{
-            Session::flash('mensagemErro', 'Não é possível cadastrar formas de pagamentos repetidas!');
         }
-
         return redirect('/formapagamento/'.$id.'/edit');
     }
 
@@ -118,15 +113,12 @@ class FormaPagamentoController extends Controller
      */
     public function destroy($id)
     {
-        $query = DB::table('Pedido')->where('cod_forma_pagamento', $id)->count();
 
-        if($query == 0){
-            $formapagamento = FormaPagamento::findOrFail($id);
-            $formapagamento->delete();
-            Session::flash('mensagem', 'Forma de Pagamento excluída com sucesso!');
-        }else{
-            Session::flash('mensagemErro', 'Não foi possível excluir a forma de pagamento selecionada pois esta possui pedidos vinculadas a ela!');
-        }
+        $formapagamento = FormaPagamento::findOrFail($id);
+        $formapagamento->inativo = 1;
+        $formapagamento->update();
+        Session::flash('mensagem', 'Forma de Pagamento excluída com sucesso!');
+
         return redirect('/formapagamento');
     }
 }

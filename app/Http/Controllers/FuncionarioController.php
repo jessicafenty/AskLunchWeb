@@ -16,7 +16,7 @@ class FuncionarioController extends Controller
      */
     public function index()
     {
-        $funcionario = Funcionario::all();
+        $funcionario = Funcionario::where('inativo', '=', '0')->get();
         return view('funcionario.index', compact('funcionario'));
     }
 
@@ -141,9 +141,10 @@ class FuncionarioController extends Controller
      */
     public function destroy($id)
     {
-        Usuario::where('cod_cliente', $id)->delete();
         $funcionario =  Funcionario::findOrFail($id);
-        $funcionario->delete();
+        $funcionario->inativo = 1;
+        $funcionario->update();
+        Usuario::where('cod_cliente', $id)->update(['inativo' => 1]);
         return redirect('/funcionario');
     }
 }

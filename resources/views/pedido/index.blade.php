@@ -52,6 +52,11 @@
                             </div>
                         @endif
 
+                        <a href="{{route('pedido.create')}}" class="btn btn-small btn-primary col-md-12">
+                            <i class="fa fa-plus-circle"></i>
+                            Novo
+                        </a>
+
 
                     </div>
 
@@ -84,7 +89,7 @@
                                     {{--<td class="col-md-4" align="center"><strong>Quadra</strong></td>--}}
                                     {{--<td class="col-md-4" align="center"><strong>Lote</strong></td>--}}
                                     {{--<td class="col-md-2" align="center"><strong>Status Atual</strong></td>--}}
-                                    <td class="col-md-2" align="center"><strong>Status</strong></td>
+                                    <td class="col-md-1" align="center"><strong>Status</strong></td>
                                     <td class="col-md-2" align="center"><strong>Entregador</strong></td>
                                     <td class="col-md-2" align="center"><strong>Ações</strong></td>
                                     {{--<td class="col-md-4" align="center"><strong>Coordenadas</strong></td>--}}
@@ -125,12 +130,42 @@
                                             {{--</select>--}}
                                         {{--</td>--}}
                                         {{--<td>{{$c->entregador}}</td>--}}
-                                        <td align="right">
-                                            <a href="{{route('pedido.show',$c->codigo)}}" class="btn btn-small btn-info">
+                                        <td align="center">
+                                            <a href="{{route('pedido.marmitas',$c->codigo)}}" class="btn btn-small btn-info">
                                                 <i class="fa fa-search-plus"></i>
-                                                Detalhes
                                             </a>
+                                            <a href="{{route('pedido.edit',$c->codigo)}}" class="btn btn-small btn-default" style="background-color: goldenrod;color: white">
+                                                <i class="fa fa-pencil-square-o"></i>
+                                            </a>
+                                            <a data-toggle="modal" href="#myModal{{$c->codigo}}" class="btn btn-small btn-danger">
+                                                <i class="fa fa-trash-o"></i>
+                                            </a>
+                                            <div class="modal fade modal-danger" id="myModal{{$c->codigo}}" role="dialog">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+
+                                                        <div class="modal-header" style="text-align: left">
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                            <h4 class="modal-title"> Excluir Pedido </h4>
+                                                        </div>
+
+                                                        <div class="modal-body text-center">
+                                                            <p>Deseja realmente excluir o pedido nº {{$c->codigo}}?</p>
+                                                        </div>
+
+                                                        <div class="modal-footer">
+                                                            {!! Form::open(array('route' => array('pedido.destroy', $c->codigo), 'method' => 'delete')) !!}
+                                                            {!! csrf_field() !!}
+                                                            <button class="btn btn-danger" type="submit">Excluir</button>
+                                                            <button class="btn btn-default" type="button" data-dismiss="modal">Cancelar</button>
+                                                            {!! Form::close() !!}
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </td>
+
                                         {{--<td align="center" id="tdcheck"><input name="status" type="checkbox" id="{{$c->codigo}}" value="Ativo" {{ "Ativo" === (isset($c->status_pedido) ? $c->status_pedido : '' ) ? 'checked' : '' }}></td>--}}
 
                                     </tr>

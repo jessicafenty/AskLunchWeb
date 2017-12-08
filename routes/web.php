@@ -46,6 +46,8 @@ Route::group(['middleware' => ['web']], function (){
         Route::resource('pedido', 'PedidoController');
 //        Route::get('filtrarStatus/{status}', 'AjaxController@filtrarStatus')->name('filtrar');
         Route::get('alterarStatus/{id}', 'AjaxController@alterarStatus');
+        Route::get('enderecoCliente/{id}', 'AjaxController@trazerEndereco');
+        Route::get('enderecoPedido/{id}', 'AjaxController@trazerEnderecoPedido');
         Route::get('relatorios', 'RelatorioController@exibirOpcoesRelatorio')->name('relatorios');
         Route::post('relatorioSelecionado', 'RelatorioController@index');
 //        Route::get('alterarStatusRecebido/{id}', 'AjaxController@alterarStatusRecebido');
@@ -58,7 +60,11 @@ Route::group(['middleware' => ['web']], function (){
         Route::get('pedidosRecebidos/marmitas/{id}',array('as' => 'pedido.marmitas', 'uses' => 'AjaxController@showMarmitas'));
         Route::get('itens/{id}', 'AjaxController@showItens');
 
+        Route::post('valorMarmitas', array('as' => 'valor.marmitas', 'uses' => 'AjaxController@alterarValor'));
+
         Route::get('cancelarPedido/{id}',array('as' => 'pedido.cancelar', 'uses' => 'AjaxController@alterarStatusCancelar'));
+        Route::get('pedidosExtraviados',array('as' => 'pedidos.extraviados', 'uses' => 'AjaxController@selecionarExtraviados'));
+        Route::get('pedidosExtraviados/{id}',array('as' => 'pedido.extraviado.recriar', 'uses' => 'AjaxController@recriarPedido'));
         Route::get('pedidosRota',array('as' => 'pedido.rota', 'uses' => 'AjaxController@selecionarAndamento'));
         Route::get('pedidosRota/{id}/finalizar',array('as' => 'pedido.finalizar', 'uses' => 'AjaxController@alterarStatusFinalizar'));
         Route::get('pedidosRota/{id}',array('as' => 'pedido.extraviado', 'uses' => 'AjaxController@alterarStatusExtraviado'));

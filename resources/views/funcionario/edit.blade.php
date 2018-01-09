@@ -28,7 +28,21 @@
             </div>
         </div>
     @endif
-
+    @if (Session::has('mensagemErro'))
+        <div class="col-md-10 col-md-offset-1">
+            <div class="box alert alert-danger">
+                <div class="box-header with-border">
+                    <h3 class="box-title" style="color:white">{{Session::get('mensagemErro')}}</h3>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool"
+                                data-widget="remove" data-toggle="tooltip" title="Fechar">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
     <div class="container-fluid spark-screen">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">

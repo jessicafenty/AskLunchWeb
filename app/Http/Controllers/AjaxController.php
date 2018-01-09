@@ -184,7 +184,7 @@ WHERE Item_Marmita.cod_marmita = ".$id." ORDER BY Item.descricao"));
     {
         $pedido = Pedido::findOrFail($id);
         $novoPedido = new Pedido();
-        $novoPedido->data_pedido = $pedido->data_pedido;
+        $novoPedido->data_pedido = date("Y-m-d");
         $novoPedido->troco = $pedido->troco;
         $novoPedido->cod_forma_pagamento = $pedido->cod_forma_pagamento;
         $novoPedido->cod_cliente = $pedido->cod_cliente;

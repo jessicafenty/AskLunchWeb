@@ -92,15 +92,22 @@ class FormaPagamentoController extends Controller
     public function update(Request $request, $id)
     {
         if($request->input('formapagamento') != null) {
-            $formapagamento = FormaPagamento::findOrFail($id);
-            $formapagamento->descricao = $request->formapagamento;
-            if ($request->input('status') == "Ativo") {
-                $formapagamento->status = $request->input('status');
+            $count = FormaPagamento::where('descricao', $request->input('formapagamento'))
+                ->where('codigo', '<>', $id)
+                ->count();
+            if ($count < 1) {
+                $formapagamento = FormaPagamento::findOrFail($id);
+                $formapagamento->descricao = $request->formapagamento;
+                if ($request->input('status') == "Ativo") {
+                    $formapagamento->status = $request->input('status');
+                } else {
+                    $formapagamento->status = "Inativo";
+                }
+                $formapagamento->update();
+                Session::flash('mensagem', 'Forma de Pagamento cadastrada com sucesso!');
             } else {
-                $formapagamento->status = "Inativo";
+                Session::flash('mensagemErro', 'Não é possível cadastrar formas de pagamentos repetidas!');
             }
-            $formapagamento->update();
-            Session::flash('mensagem', 'Forma de Pagamento cadastrada com sucesso!');
         }
         return redirect('/formapagamento/'.$id.'/edit');
     }

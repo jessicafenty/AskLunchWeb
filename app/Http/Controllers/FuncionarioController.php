@@ -55,16 +55,24 @@ class FuncionarioController extends Controller
 
         $funcionario->save();
 
-        $usuario = new Usuario();
-        $usuario->email = $request->input('email');
-        $usuario->senha = bcrypt($request->input('senha'));
-        $usuario->tipo = $request->input('tipo');
+        if($request->input('email') != null) {
+            $count = Usuario::where('email', $request->input('email'))->count();
+            if ($count < 1) {
 
-        $usuario->funcionario()->associate($funcionario);
+                $usuario = new Usuario();
+                $usuario->email = $request->input('email');
+                $usuario->senha = bcrypt($request->input('senha'));
+                $usuario->tipo = $request->input('tipo');
 
-        $usuario->save();
+                $usuario->funcionario()->associate($funcionario);
 
-        Session::flash('mensagem', 'Funcionário cadastrado com sucesso!');
+                $usuario->save();
+
+                Session::flash('mensagem', 'Funcionário cadastrado com sucesso!');
+            } else {
+                Session::flash('mensagemErro', 'Email já cadastrado!');
+            }
+        }
 
         return redirect('/funcionario/create');
 
@@ -119,16 +127,37 @@ class FuncionarioController extends Controller
 
         $funcionario->save();
 
-        $usuario = Usuario::find($id);
-        $usuario->email = $request->input('email');
-        $usuario->senha = bcrypt($request->input('senha'));
-        $usuario->tipo = $request->input('tipo');
 
-        $usuario->funcionario()->associate($funcionario);
+       // dd($usuario->email);
+//        $usuario->email = $request->input('email');
+//        $usuario->senha = bcrypt($request->input('senha'));
+//        $usuario->tipo = $request->input('tipo');
+//
+//        $usuario->funcionario()->associate($funcionario);
+//
+//        $usuario->update();
+//
+//        Session::flash('mensagem', 'Funcionário atualizado com sucesso!');
 
-        $usuario->update();
+        if($request->input('email') != null) {
+            $count = Usuario::where('email', $request->input('email'))
+                ->where('cod_cliente', '<>', $id)->count();
+            if ($count < 1) {
 
-        Session::flash('mensagem', 'Funcionário atualizado com sucesso!');
+                $usuario = Usuario::where('cod_cliente',$id)->first();
+                $usuario->email = $request->input('email');
+                $usuario->senha = bcrypt($request->input('senha'));
+                $usuario->tipo = $request->input('tipo');
+
+                $usuario->funcionario()->associate($funcionario);
+
+                $usuario->update();
+
+                Session::flash('mensagem', 'Funcionário atualizado com sucesso!');
+            } else {
+                Session::flash('mensagemErro', 'Email já cadastrado!');
+            }
+        }
 
         return redirect('/funcionario/'.$id.'/edit');
     }

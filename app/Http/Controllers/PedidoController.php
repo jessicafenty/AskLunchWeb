@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 use App\FormaPagamento;
 use App\Funcionario;
+use App\Item;
 use App\Pedido;
 use App\Usuario;
 use Illuminate\Http\Request;
@@ -46,7 +47,9 @@ class PedidoController extends Controller
         $pedido = Pedido::all();
         $formapagamento = FormaPagamento::all();
         $cliente = Funcionario::all();
-        return view('pedido.create', compact('pedido', 'formapagamento', 'cliente'));
+        $itens = Item::where('status_item','=','Ativo')->
+            where('inativo','=','0')->get();
+        return view('pedido.create', compact('pedido', 'formapagamento', 'cliente','itens'));
     }
 
     /**

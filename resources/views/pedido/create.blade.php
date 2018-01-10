@@ -54,6 +54,63 @@
                         <form class="form-horizontal" action="{{action('PedidoController@store')}}" method="post">
                             <input type="hidden" name="_token" value="{{{csrf_token()}}}">
 
+
+                            <div class="form-group text-center">
+                                <div class="col-sm-6">
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" id="checkG">Grande
+                                    </label>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" id="checkP">Pequena
+                                    </label>
+                                </div>
+
+                            </div>
+
+                            <div class="form-group form-inline text-center">
+                                <div class="form-group">
+                                    <label for="inputQtdGrande" id="labelGrande" class="col-sm-2 control-label">Grande</label>
+                                    <div class="col-sm-6">
+                                        <input type="number" class="form-control input-lg" id="inputQtdGrande" name="qtdGrande"
+                                               value="{{old('qtdGrande')}}" placeholder="Qtd Marmita Grande">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputQtdPequena" id="labelPequena" class="col-sm-2 control-label">Pequena</label>
+                                    <div class="col-sm-6">
+                                        <input type="number" class="form-control input-lg" id="inputQtdPequena" name="qtdPequena"
+                                               value="{{old('qtdPequena')}}" placeholder="Qtd Marmita Pequena">
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            {{--<div class="panel-group col-md-12" id="accordion">--}}
+                                {{--<div class="panel panel-default">--}}
+                                    {{--<div class="panel-heading text-center">--}}
+                                        {{--<h4 class="panel-title">--}}
+                                            {{--<a data-toggle="collapse" data-parent="#accordion" href="#collapse1">Marmita</a>--}}
+                                        {{--</h4>--}}
+                                    {{--</div>--}}
+                                    {{--<div id="collapse1" class="panel-collapse collapse">--}}
+                                        {{--<div class="panel-body">--}}
+                                            {{--@foreach($itens as $item)--}}
+                                                {{--<div class="form-check checkbox-inline">--}}
+                                                    {{--<input type="checkbox" checked="checked" class="form-check-input" id="inputItem" value="{{$item['codigo']}}">--}}
+                                                    {{--<label class="form-check-label" for="labelItem">{{$item['descricao']}}</label>--}}
+                                                {{--</div>--}}
+                                            {{--@endforeach--}}
+                                        {{--</div>--}}
+                                    {{--</div>--}}
+                                {{--</div>--}}
+                            {{--</div>--}}
+                            <div id="containerGrande"></div>
+                            <div id="containerPequena"></div>
+
+
+
                                 <div class="form-group">
                                     <label for="idPagamento" class="control-label col-sm-2">
                                         <a href="{{route('formapagamento.create')}}">Pagamento</a>
@@ -181,6 +238,103 @@
 @section('scriptlocal')
     <script type="text/javascript">
         $(document).ready(function () {
+
+            var typingTimer;                //timer identifier
+            var doneTypingInterval = 500;  //time in ms, 5 second for example
+            var $inputG = $('#inputQtdGrande');
+            var $inputP = $('#inputQtdPequena');
+
+            //on keyup, start the countdown
+            $inputG.on('keyup', function () {
+                clearTimeout(typingTimer);
+                typingTimer = setTimeout(doneTypingG, doneTypingInterval);
+            });
+
+            //on keydown, clear the countdown
+            $inputG.on('keydown', function () {
+                clearTimeout(typingTimer);
+            });
+
+            //on keyup, start the countdown
+            $inputP.on('keyup', function () {
+                clearTimeout(typingTimer);
+                typingTimer = setTimeout(doneTypingP, doneTypingInterval);
+            });
+
+            //on keydown, clear the countdown
+            $inputP.on('keydown', function () {
+                clearTimeout(typingTimer);
+            });
+
+            //user is "finished typing," do something
+            function doneTypingG () {
+                //alert($('#inputQtdGrande').val());
+                //var elemento = $('#accordion').clone();
+                var itens = '<?php echo $itens ?>';
+
+                var htmlThree = "</div></div></div></div>";
+                var htmlTwo = "";
+                $.each(JSON.parse(itens), function (i, obj) {
+//                    if(!isNaN(obj.descricao)) {
+                        htmlTwo += "<div class='form-check checkbox-inline'>"
+                            + "<input type='checkbox' checked='checked' class='form-check-input' id='inputItem' value='" + obj.codigo + "'>" +
+                            "<label class='form-check-label' for='labelItem'>" + obj.descricao + "</label>"
+                            + "</div>";
+//                    }
+                });
+                for (i = 0; i < $('#inputQtdGrande').val(); i++) {
+                    var htmlOne = "<div class='panel-group col-md-12' id='accordion"+i+"'>"
+                        +"<div class='panel panel-default'><div class='panel-heading text-center bg-navy'>"
+                        +"<h4 class='panel-title'><a data-toggle='collapse' data-parent='#accordion' href='#collapse"+i+"'>"
+                        +"Marmita Grande "+(i+1)+" </a></h4></div><div id='collapse"+i+"' class='panel-collapse collapse'>" +
+                        +"<div class='panel-body'>";
+
+                        $('#containerGrande').append(htmlOne+htmlTwo+htmlThree);
+                }
+            }
+            function doneTypingP () {
+                //alert($('#inputQtdGrande').val());
+                //var elemento = $('#accordion').clone();
+                var itens = '<?php echo $itens ?>';
+
+                var htmlThree = "</div></div></div></div>";
+                var htmlTwo = "";
+                $.each(JSON.parse(itens), function (i, obj) {
+                    htmlTwo += "<div class='form-check checkbox-inline'>"
+                        +"<input type='checkbox' checked='checked' class='form-check-input' id='inputItem' value='"+obj.codigo+"'>"+
+                        "<label class='form-check-label' for='labelItem'>"+obj.descricao+"</label>"
+                        +"</div>";
+                });
+                for (j = 0; j < $('#inputQtdPequena').val(); j++) {
+                    var html = "<div class='panel-group col-md-12' id='accordionP"+j+"'>"
+                        +"<div class='panel panel-default'><div class='panel-heading text-center bg-olive'>"
+                        +"<h4 class='panel-title'><a data-toggle='collapse' data-parent='#accordion' href='#collapseP"+j+"'>"
+                        +"Marmita Pequena "+(j+1)+" </a></h4></div><div id='collapseP"+j+"' class='panel-collapse collapse'>" +
+                        +"<div class='panel-body'>";
+
+                    $('#containerPequena').append(html+htmlTwo+htmlThree);
+                }
+            }
+
+
+
+
+            $('#inputQtdGrande').attr('disabled', 'disabled');
+            $('#inputQtdPequena').attr('disabled', 'disabled');
+            $("#checkG").click(function(){
+                if($('#checkG').is(':checked')){
+                    $('#inputQtdGrande').removeAttr('disabled');
+                }else{
+                    $('#inputQtdGrande').attr('disabled', 'disabled');
+                }
+            });
+            $("#checkP").click(function(){
+                if($('#checkP').is(':checked')){
+                    $('#inputQtdPequena').removeAttr('disabled');
+                }else{
+                    $('#inputQtdPequena').attr('disabled', 'disabled');
+                }
+            });
             $('#divEntrega').hide();
             $('#divRetirada').hide();
             $.ajax({

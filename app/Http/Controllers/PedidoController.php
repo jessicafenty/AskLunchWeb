@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 
+use App\Bebida;
+use App\BebidaVenda;
 use App\Categoria;
 use App\FormaPagamento;
 use App\Funcionario;
@@ -49,12 +51,13 @@ class PedidoController extends Controller
      */
     public function create()
     {
-        $pedido = Pedido::all();
-        $formapagamento = FormaPagamento::all();
-        $cliente = Funcionario::all();
+        $pedido = Pedido::where('inativo','=','0')->get();
+        $formapagamento = FormaPagamento::where('inativo','=','0')->get();
+        $cliente = Funcionario::where('inativo','=','0')->get();
         $itens = Item::where('status_item','=','Ativo')->
             where('inativo','=','0')->get();
-        return view('pedido.create', compact('pedido', 'formapagamento', 'cliente','itens'));
+        $bebidas = Bebida::where('inativo','=','0')->get();
+        return view('pedido.create', compact('pedido', 'formapagamento', 'cliente','itens','bebidas'));
     }
 
     /**
@@ -65,112 +68,113 @@ class PedidoController extends Controller
      */
     public function store(Request $request)
     {
-        $pedido = new Pedido();
-        if($request->input('codigo') !=null){
-            if($request->input('codigo') == 0) {
-                $pedido->entrega = 0;
-                $pedido->horario = $request->input('horas') .":". $request->input('minutos').":00";
+//        dd(Input::get());
+        try {
+            $pedido = new Pedido();
+            if ($request->input('codigo') != null) {
+                if ($request->input('codigo') == 0) {
+                    $pedido->entrega = 0;
+                    $pedido->horario = $request->input('horas') . ":" . $request->input('minutos') . ":00";
 //                echo $pedido->logradouro;
-            }else{
-                $pedido->entrega = 1;
-                $pedido->horario = "00:00:00";
-            }
-            date_default_timezone_set('America/Sao_Paulo');
-            $data = date("Y-m-d H:i:s");
-            $pedido->data_pedido = $data;
-            $pedido->troco = $request->troco;
-            $pedido->cod_forma_pagamento = $request->input('pagamento');
-            $pedido->cod_cliente = $request->input('cliente');
-            $pedido->logradouro = $request->logradouro;
-            $pedido->bairro = $request->bairro;
-            $pedido->numero = $request->numero;
-            $pedido->quadra = $request->quadra;
-            $pedido->lote = $request->lote;
-            $pedido->coordenadas = $request->input('coordenadas');
-            $pedido->status = "Recebido";
-            $pedido->entregador = "Padrão";
-            $pedido->save();
-
-            $fields = Input::get();
-            //dd($fields);
-
-            $categoriaGrande = Categoria::where('tamanho','=','Grande')->get();
-            for($i=0;$i<$request->qtdGrande;$i++){
-                $marmitaGrande = new Marmita();
-                $marmitaGrande->categoria()->associate($categoriaGrande[0]['codigo']);
-                $marmitaGrande->valor_vendido = $categoriaGrande[0]['valor'];
-                $marmitaGrande->pedido()->associate($pedido);
-                $marmitaGrande->save();
-
-
-                foreach($fields as $name => $value)
-                {
-                    $p = (string)$i;
-
-                    if(ends_with($name,'G')){
-                        if (starts_with($name, $p[0])){
-                            $itemMarmitaGrande = new ItemMarmita();
-                            $itemMarmitaGrande->cod_marmita = $marmitaGrande->codigo;
-                            $itemMarmitaGrande->cod_item = $value;
-                            $itemMarmitaGrande->save();
-//                            echo $name.'<br>';
-//                            echo $value.'<br>';
-
-                        }
-                    }
+                } else {
+                    $pedido->entrega = 1;
+                    $pedido->horario = "00:00:00";
                 }
-            }
-
-            $categoriaPequena = Categoria::where('tamanho','=','Pequena')->get();
-            for($j=0;$j<$request->qtdPequena;$j++){
-                $marmitaPequena = new Marmita();
-                $marmitaPequena->categoria()->associate($categoriaPequena[0]['codigo']);
-                $marmitaPequena->valor_vendido = $categoriaPequena[0]['valor'];
-                $marmitaPequena->pedido()->associate($pedido);
-                $marmitaPequena->save();
-
-                foreach($fields as $name => $value)
-                {
-                    $p = (string)$j;
-
-                    if(ends_with($name,'P')){
-                        if (starts_with($name, $p[0])){
-                            $itemMarmitaPequena = new ItemMarmita();
-                            $itemMarmitaPequena->cod_marmita = $marmitaPequena->codigo;
-                            $itemMarmitaPequena->cod_item = $value;
-                            $itemMarmitaPequena->save();
-//                            echo $name.'<br>';
-//                            echo $value.'<br>';
-
-                        }
-                    }
-                }
-            }
-
-
-
-//            $fields = Input::get();
-//            $i = 0;
-//            //var_dump((string)$i);
+                date_default_timezone_set('America/Sao_Paulo');
+                $data = date("Y-m-d H:i:s");
+                $pedido->data_pedido = $data;
+                $pedido->troco = $request->troco;
+                $pedido->cod_forma_pagamento = $request->input('pagamento');
+                $pedido->cod_cliente = $request->input('cliente');
+                $pedido->logradouro = $request->logradouro;
+                $pedido->bairro = $request->bairro;
+                $pedido->numero = $request->numero;
+                $pedido->quadra = $request->quadra;
+                $pedido->lote = $request->lote;
+                $pedido->coordenadas = $request->input('coordenadas');
+                $pedido->status = "Recebido";
+                $pedido->entregador = "Padrão";
+                $pedido->save();
 //
-//            foreach($fields as $name => $value)
-//            {
-//                $p = (string)$i;
-//                //var_dump($t[0]);
-//                if(ends_with($name,'G')){
-//                    if (starts_with($name, $p[0])){
-//                        echo $name.'<br>';
-//                        echo $value.'<br>';
-//                    }else{
-//                        echo $name.'<br>';
-//                        echo $value.'<br>';
-//                        $i++;
-//                    }
-//                }
-//            }
-            Session::flash('mensagem', 'Pedido cadastrado com sucesso!');
-        }else{
-            Session::flash('mensagemErro', 'Favor escolher uma OPÇÃO!');
+                $fields = Input::get();
+//
+                $categoriaGrande = Categoria::where('tamanho', '=', 'Grande')->get();
+                for ($i = 0; $i < $request->qtdGrande; $i++) {
+                    $marmitaGrande = new Marmita();
+                    $marmitaGrande->categoria()->associate($categoriaGrande[0]['codigo']);
+                    $marmitaGrande->valor_vendido = $categoriaGrande[0]['valor'];
+                    $marmitaGrande->pedido()->associate($pedido);
+                    $marmitaGrande->save();
+
+
+                    foreach ($fields as $name => $value) {
+                        $p = (string)$i;
+
+                        if (ends_with($name, 'G')) {
+                            if (starts_with($name, $p[0])) {
+                                $itemMarmitaGrande = new ItemMarmita();
+                                $itemMarmitaGrande->cod_marmita = $marmitaGrande->codigo;
+                                $itemMarmitaGrande->cod_item = $value;
+                                $itemMarmitaGrande->save();
+//                            echo $name.'<br>';
+//                            echo $value.'<br>';
+
+                            }
+                        }
+                    }
+                }
+
+                $categoriaPequena = Categoria::where('tamanho', '=', 'Pequena')->get();
+                for ($j = 0; $j < $request->qtdPequena; $j++) {
+                    $marmitaPequena = new Marmita();
+                    $marmitaPequena->categoria()->associate($categoriaPequena[0]['codigo']);
+                    $marmitaPequena->valor_vendido = $categoriaPequena[0]['valor'];
+                    $marmitaPequena->pedido()->associate($pedido);
+                    $marmitaPequena->save();
+
+                    foreach ($fields as $name => $value) {
+                        $p = (string)$j;
+
+                        if (ends_with($name, 'P')) {
+                            if (starts_with($name, $p[0])) {
+                                $itemMarmitaPequena = new ItemMarmita();
+                                $itemMarmitaPequena->cod_marmita = $marmitaPequena->codigo;
+                                $itemMarmitaPequena->cod_item = $value;
+                                $itemMarmitaPequena->save();
+//                            echo $name.'<br>';
+//                            echo $value.'<br>';
+
+                            }
+                        }
+                    }
+                }
+
+
+                foreach ($fields as $name => $value) {
+                    if (ends_with($name, 'B')) {
+                        $arrBebidas = explode("-", $name);
+                        if ($value != null) {
+                            //$i=0;
+                            //while($i < $value){
+                            $bebida = new BebidaVenda();
+                            $bebida->cod_bebida = $arrBebidas[0];
+                            $valorBebida = Bebida::where('codigo', '=', $bebida->cod_bebida)->get();
+                            $bebida->valor_unitario = $valorBebida[0]['valor'];
+                            $bebida->qtd = $value;
+                            $bebida->cod_pedido = $pedido->codigo;
+                            $bebida->save();
+                            //echo $arrBebidas[0].'-'.$value.'<br>';
+                            //$i++;
+                            //}
+                        }
+                    }
+                }
+                Session::flash('mensagem', 'Pedido cadastrado com sucesso!');
+            } else {
+                Session::flash('mensagemErro', 'Favor escolher uma OPÇÃO!');
+            }
+        }catch (\Exception $exception){
+            echo 'Erro: '.$exception;
         }
         return redirect('/pedido/create');
     }

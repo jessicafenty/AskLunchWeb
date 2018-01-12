@@ -91,31 +91,37 @@
                             </div>
 
 
-                            {{--<div class="panel-group col-md-12" id="accordion">--}}
-                                {{--<div class="panel panel-default">--}}
-                                    {{--<div class="panel-heading text-center">--}}
-                                        {{--<h4 class="panel-title">--}}
-                                            {{--<a data-toggle="collapse" data-parent="#accordion" href="#collapse1">Marmita</a>--}}
-                                        {{--</h4>--}}
-                                    {{--</div>--}}
-                                    {{--<div id="collapse1" class="panel-collapse collapse">--}}
-                                        {{--<div class="panel-body">--}}
-                                            {{--@foreach($itens as $item)--}}
-                                                {{--<div class="form-check checkbox-inline">--}}
-                                                    {{--<input type="checkbox" checked="checked" class="form-check-input" id="inputItem" value="{{$item['codigo']}}">--}}
-                                                    {{--<label class="form-check-label" for="labelItem">{{$item['descricao']}}</label>--}}
-                                                {{--</div>--}}
-                                            {{--@endforeach--}}
-                                        {{--</div>--}}
-                                    {{--</div>--}}
-                                {{--</div>--}}
-                            {{--</div>--}}
-                            <div id="containerGrande" style="padding-top: 3%"></div>
+                            <div id="containerGrande" style="padding-top: 4%"></div>
                             <div id="containerPequena"></div>
 
+                            <div class="form-group" style="margin-bottom: 4%">
+                                <div class="text-center">
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" id="checkBebidas" name="checkAddBebidas"> Deseja adicionar bebidas a este pedido?
+                                    </label>
+                                </div>
+                            </div>
+                            <div id="divBebidas" class="form-group" style="border-style: groove; margin: auto; padding: 1%">
+                                @foreach($bebidas as $bebida)
+                                    <div class="form-inline text-center">
+                                    {{--<label class="checkbox-inline">--}}
+                                        {{--<input type="checkbox" name="bebida{{$bebida['codigo']}}" value="{{$bebida['codigo']}}">{{$bebida['descricao']}}--}}
+                                    {{--</label>--}}
+                                    {{--<div>--}}
+                                        <div>
+                                            <label for="labelBebidas">{{$bebida['descricao']}} - {{$bebida['quantidade']}}</label>
+                                        </div>
+                                        <div>
+                                            <input type="number" class="form-control input-sm margin" name="{{$bebida['codigo']}}-B"
+                                                   value="{{old($bebida['codigo'])}}" placeholder="Quantidade">
+                                        </div>
+
+                                    </div>
+                                @endforeach
+                            </div>
 
 
-                                <div class="form-group">
+                                <div class="form-group" style="padding-top: 3%">
                                     <label for="idPagamento" class="control-label col-sm-2">
                                         <a href="{{route('formapagamento.create')}}">Pagamento</a>
                                     </label>
@@ -320,7 +326,15 @@
                 }
             }
 
-
+            $('#divBebidas').hide();
+            $("#checkBebidas").click(function(){
+                if($('#checkBebidas').is(':checked')){
+                    $('#divBebidas').show();
+                }else{
+                    $('#divBebidas').hide();
+                    $('#divBebidas input[type = number]').val("");
+                }
+            });
 
 
             $('#inputQtdGrande').attr('disabled', 'disabled');

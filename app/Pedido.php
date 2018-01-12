@@ -20,4 +20,8 @@ class Pedido extends Model
     public function formapagamento(){
         return $this->belongsTo('App\FormaPagamento', 'cod_forma_pagamento');
     }
+
+    public function marmita(){
+        return $this->hasMany('App\Marmita', 'cod_pedido');
+    }
 }

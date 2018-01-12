@@ -54,6 +54,9 @@
                         <form class="form-horizontal" action="{{action('PedidoController@store')}}" method="post">
                             <input type="hidden" name="_token" value="{{{csrf_token()}}}">
 
+                            <div class="form-group text-center" style="border-style: groove; margin: auto">
+                                <h4>Selecione o tamanho da marmita e informe a quantidade</h4>
+
 
                             <div class="form-group text-center">
                                 <div class="col-sm-6">
@@ -85,6 +88,7 @@
                                     </div>
                                 </div>
                             </div>
+                            </div>
 
 
                             {{--<div class="panel-group col-md-12" id="accordion">--}}
@@ -106,7 +110,7 @@
                                     {{--</div>--}}
                                 {{--</div>--}}
                             {{--</div>--}}
-                            <div id="containerGrande"></div>
+                            <div id="containerGrande" style="padding-top: 3%"></div>
                             <div id="containerPequena"></div>
 
 
@@ -268,51 +272,51 @@
 
             //user is "finished typing," do something
             function doneTypingG () {
-                //alert($('#inputQtdGrande').val());
-                //var elemento = $('#accordion').clone();
+
                 var itens = '<?php echo $itens ?>';
 
                 var htmlThree = "</div></div></div></div>";
                 var htmlTwo = "";
-                $.each(JSON.parse(itens), function (i, obj) {
-//                    if(!isNaN(obj.descricao)) {
-                        htmlTwo += "<div class='form-check checkbox-inline'>"
-                            + "<input type='checkbox' checked='checked' class='form-check-input' id='inputItem' value='" + obj.codigo + "'>" +
-                            "<label class='form-check-label' for='labelItem'>" + obj.descricao + "</label>"
-                            + "</div>";
-//                    }
-                });
+
                 for (i = 0; i < $('#inputQtdGrande').val(); i++) {
                     var htmlOne = "<div class='panel-group col-md-12' id='accordion"+i+"'>"
                         +"<div class='panel panel-default'><div class='panel-heading text-center bg-navy'>"
                         +"<h4 class='panel-title'><a data-toggle='collapse' data-parent='#accordion' href='#collapse"+i+"'>"
-                        +"Marmita Grande "+(i+1)+" </a></h4></div><div id='collapse"+i+"' class='panel-collapse collapse'>" +
+                        +"Marmita Grande "+(i+1)+" </a></h4></div><div id='collapse"+i+"' class='panel-collapse collapse'>"
                         +"<div class='panel-body'>";
+                    $.each(JSON.parse(itens), function (j, obj) {
+                        htmlTwo += "<div class='form-check checkbox-inline'>"
+                            + "<input type='checkbox' name= '"+i+j+"G' checked='checked' class='form-check-input' id='inputItem' value='" + obj.codigo + "'>" +
+                            "<label class='form-check-label' for='labelItem'>" + obj.descricao + "</label>"
+                            + "</div>";
+                    });
 
                         $('#containerGrande').append(htmlOne+htmlTwo+htmlThree);
+                        htmlTwo = "";
                 }
             }
             function doneTypingP () {
-                //alert($('#inputQtdGrande').val());
-                //var elemento = $('#accordion').clone();
+
                 var itens = '<?php echo $itens ?>';
 
                 var htmlThree = "</div></div></div></div>";
                 var htmlTwo = "";
-                $.each(JSON.parse(itens), function (i, obj) {
-                    htmlTwo += "<div class='form-check checkbox-inline'>"
-                        +"<input type='checkbox' checked='checked' class='form-check-input' id='inputItem' value='"+obj.codigo+"'>"+
-                        "<label class='form-check-label' for='labelItem'>"+obj.descricao+"</label>"
-                        +"</div>";
-                });
-                for (j = 0; j < $('#inputQtdPequena').val(); j++) {
-                    var html = "<div class='panel-group col-md-12' id='accordionP"+j+"'>"
-                        +"<div class='panel panel-default'><div class='panel-heading text-center bg-olive'>"
-                        +"<h4 class='panel-title'><a data-toggle='collapse' data-parent='#accordion' href='#collapseP"+j+"'>"
-                        +"Marmita Pequena "+(j+1)+" </a></h4></div><div id='collapseP"+j+"' class='panel-collapse collapse'>" +
-                        +"<div class='panel-body'>";
 
-                    $('#containerPequena').append(html+htmlTwo+htmlThree);
+                for (i = 0; i < $('#inputQtdPequena').val(); i++) {
+                    var htmlOne = "<div class='panel-group col-md-12' id='accordionP"+i+"'>"
+                        +"<div class='panel panel-default'><div class='panel-heading text-center bg-olive'>"
+                        +"<h4 class='panel-title'><a data-toggle='collapse' data-parent='#accordionP' href='#collapseP"+i+"'>"
+                        +"Marmita Pequena "+(i+1)+" </a></h4></div><div id='collapseP"+i+"' class='panel-collapse collapse'>"
+                        +"<div class='panel-body'>";
+                    $.each(JSON.parse(itens), function (j, obj) {
+                        htmlTwo += "<div class='form-check checkbox-inline'>"
+                            + "<input type='checkbox' name= '"+i+j+"P' checked='checked' class='form-check-input' id='inputItemP' value='" + obj.codigo + "'>" +
+                            "<label class='form-check-label' for='labelItemP'>" + obj.descricao + "</label>"
+                            + "</div>";
+                    });
+
+                    $('#containerPequena').append(htmlOne+htmlTwo+htmlThree);
+                    htmlTwo = "";
                 }
             }
 

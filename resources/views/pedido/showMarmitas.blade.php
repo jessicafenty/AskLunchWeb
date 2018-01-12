@@ -57,7 +57,7 @@
                             </div>
 
                         </div>
-                        <a href="{{route('pedido.recebido')}}" class="btn btn-small btn-primary pull-right btn-lg" style="float: right">
+                        <a href="{{route('pedido.index')}}" class="btn btn-small btn-primary pull-right btn-lg" style="float: right">
                             Voltar
                         </a>
 

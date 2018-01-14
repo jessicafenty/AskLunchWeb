@@ -207,13 +207,20 @@ class PedidoController extends Controller
      */
     public function edit($id)
     {
+
         $pedido = Pedido::findOrFail($id);
-        $formapagamento = FormaPagamento::all();
-        $cliente = Funcionario::all();
+        $formapagamento = FormaPagamento::where('inativo','=','0')->get();
+        $cliente = Funcionario::where('inativo','=','0')->get();
         $horario = explode(":", $pedido->horario);
         $horas = (int) $horario[0];
         $minutos = (int) $horario[1];
-        return view('pedido.edit', compact('pedido','formapagamento', 'cliente', 'horas', 'minutos'));
+        $marmitasGrandes = Marmita::where('cod_pedido','=',$pedido->codigo)->where('cod_categoria','=',1)->get();
+        $marmitasPequenas = Marmita::where('cod_pedido','=',$pedido->codigo)->where('cod_categoria','=',2)->get();
+        //dd(sizeof($marmitas));
+        $itens = Item::where('status_item','=','Ativo')->where('inativo','=','0')->get();
+        $bebidas = BebidaVenda::where('cod_pedido','=',$pedido->codigo)->where('inativo','=','0')->get();
+        return view('pedido.edit', compact('pedido','formapagamento',
+            'cliente', 'horas', 'minutos', 'marmitasGrandes', 'marmitasPequenas', 'bebidas','itens'));
     }
 
     /**

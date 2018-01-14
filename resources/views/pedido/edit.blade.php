@@ -256,7 +256,55 @@
                 preencherItensG();
             }
             if($inputP!==0){
-                doneTypingP();
+                preencherItensP();
+            }
+            function preencherItensG2 (valorPadrao) {
+
+                var itens = '<?php echo $itens ?>';
+                var marmitas = '<?php echo $marmitasGrandes ?>';
+                var mg = JSON.parse(marmitas);
+                //alert(mg[0].codigo);
+
+
+                var htmlThree = "</div></div></div></div>";
+                var htmlTwo = "";
+
+                var z = 0;
+
+                for (i = 0; i <  valorPadrao; i++) {
+//                    console.log("i preencher "+i);
+                    var htmlOne = "<div class='panel-group col-md-12' id='accordion"+i+"'>"
+                        +"<div class='panel panel-default'><div class='panel-heading text-center bg-navy'>"
+                        +"<h4 class='panel-title'><a data-toggle='collapse' data-parent='#accordion' href='#collapse"+i+"'>"
+                        +"Marmita Grande "+(i+1)+" </a></h4>"
+                        +"<input type='hidden' name='"+(i+1)+"C' value='"+mg[i].codigo+"'></div>"
+                        +"<div id='collapse"+i+"' class='panel-collapse collapse'>"
+                        +"<div class='panel-body' id='div"+i+"'>";
+                    $.each(JSON.parse(itens), function (j, obj) {
+                        htmlTwo += "<div class='form-check checkbox-inline'>"
+                            + "<input type='checkbox' name= '"+i+j+"G' class='form-check-input' id='inputItem' value='" + obj.codigo + "'>" +
+                            "<label class='form-check-label' for='labelItem'>" + obj.descricao + "</label>"
+                            + "</div>";
+                    });
+
+                    $('#containerGrande').append(htmlOne+htmlTwo+htmlThree);
+                    //console.log("i - "+i);
+                    $.ajax({
+                        url:'../../../itensMarmitas/'+mg[i].codigo,
+                        type:'GET',
+                        dataType:'json',
+                        success: function(result){
+
+                            $.each(JSON.parse(result), function (x, objItemMarmita) {
+                                //console.log(objItemMarmita.cod_item);
+                                //console.log("#div"+z);
+                                $("#div"+z).find("input[type=checkbox][value="+objItemMarmita.cod_item+"]").prop("checked","true");
+                            });
+                            z++;
+                        }
+                    });
+                    htmlTwo = "";
+                }
             }
 
             function preencherItensG () {
@@ -273,6 +321,7 @@
                 var z = 0;
 
                 for (i = 0; i <  $('#inputQtdGrande').val(); i++) {
+//                    console.log("i preencher "+i);
                     var htmlOne = "<div class='panel-group col-md-12' id='accordion"+i+"'>"
                         +"<div class='panel panel-default'><div class='panel-heading text-center bg-navy'>"
                         +"<h4 class='panel-title'><a data-toggle='collapse' data-parent='#accordion' href='#collapse"+i+"'>"
@@ -319,7 +368,7 @@
                    r=-1;
                }else{
                    var r = lastDiv.replace('accordion', '');
-                   console.log("ultima "+r);
+                   //console.log("ultima "+r);
                }
 
                 var itens = '<?php echo $itens ?>';
@@ -330,16 +379,29 @@
                 var cont = 0;
                 var verificador = 0;
 
+                var valorPadrao = $('#inputQtdGrande').prop('defaultValue');
+                var flagPadrao = 0;
+
                 if($('#inputQtdGrande').val() > valorAtual){
+                    if(valorAtual < valorPadrao){
+                        $('#containerGrande').empty();
+                        preencherItensG2(valorPadrao);
+                    }
                     cont = $('#inputQtdGrande').val() - valorAtual;
-                    console.log("cont "+cont);
+                    //r++;
+                    //console.log("cont "+cont);
                 }else{
                     if(valorAtual > $('#inputQtdGrande').val()){
                         cont = valorAtual - $('#inputQtdGrande').val();
                         verificador = 1;
                     }
                 }
-                if(verificador === 0){
+                if($('#inputQtdGrande').val() <= valorPadrao){
+                    $('#containerGrande').empty();
+                    preencherItensG();
+                    flagPadrao = 1;
+                }
+                if(verificador === 0 && flagPadrao === 0){
                     for (i = 0; i < cont; i++) {
                         r++;
                         var htmlOne = "<div class='panel-group col-md-12' id='accordion"+r+"'>"
@@ -357,43 +419,195 @@
                         $('#containerGrande').append(htmlOne+htmlTwo+htmlThree);
                         htmlTwo = "";
                     }
-                }else{
+                }
+                if(verificador === 1){
                     var contador = r;
                     for (i = 0; i < cont; i++) {
                         //console.log('i '+i);
                         //console.log($('#containerGrande').find('#accordion'+contador).attr('id'));
-                       $('#containerGrande').find('#accordion'+contador).remove();
+                        $('#containerGrande').find('#accordion'+contador).remove();
                         contador--;
                     }
+
                 }
 
             }
+
+            //---------------------------------------MARMITAS PEQUENAS -------------------------------------------
+
+
+            function preencherItensP () {
+
+                var itens = '<?php echo $itens ?>';
+                var marmitas = '<?php echo $marmitasPequenas ?>';
+                var mg = JSON.parse(marmitas);
+                //alert(mg[0].codigo);
+
+
+                var htmlThree = "</div></div></div></div>";
+                var htmlTwo = "";
+
+                var z = 0;
+
+                for (i = 0; i <  $('#inputQtdPequena').val(); i++) {
+//                    console.log("i preencher "+i);
+                    var htmlOne = "<div class='panel-group col-md-12' id='accordionP"+i+"'>"
+                        +"<div class='panel panel-default'><div class='panel-heading text-center bg-olive'>"
+                        +"<h4 class='panel-title'><a data-toggle='collapse' data-parent='#accordionP' href='#collapseP"+i+"'>"
+                        +"Marmita Pequena "+(i+1)+" </a></h4>"
+                        +"<input type='hidden' name='"+(i+1)+"C' value='"+mg[i].codigo+"'></div>"
+                        +"<div id='collapseP"+i+"' class='panel-collapse collapse'>"
+                        +"<div class='panel-body' id='divP"+i+"'>";
+                    $.each(JSON.parse(itens), function (j, obj) {
+                        htmlTwo += "<div class='form-check checkbox-inline'>"
+                            + "<input type='checkbox' name= '"+i+j+"P' class='form-check-input' id='inputItem' value='" + obj.codigo + "'>" +
+                            "<label class='form-check-label' for='labelItem'>" + obj.descricao + "</label>"
+                            + "</div>";
+                    });
+
+                    $('#containerPequena').append(htmlOne+htmlTwo+htmlThree);
+                    //console.log("i - "+i);
+                    $.ajax({
+                        url:'../../../itensMarmitasPequenas/'+mg[i].codigo,
+                        type:'GET',
+                        dataType:'json',
+                        success: function(result){
+
+                            $.each(JSON.parse(result), function (x, objItemMarmita) {
+                                //console.log(objItemMarmita.cod_item);
+                                //console.log("#div"+z);
+                                $("#divP"+z).find("input[type=checkbox][value="+objItemMarmita.cod_item+"]").prop("checked","true");
+                            });
+                            z++;
+                        }
+                    });
+                    htmlTwo = "";
+                }
+            }
+            function preencherItensP2 (valorPadrao) {
+
+                var itens = '<?php echo $itens ?>';
+                var marmitas = '<?php echo $marmitasPequenas ?>';
+                var mg = JSON.parse(marmitas);
+                //alert(mg[0].codigo);
+
+
+                var htmlThree = "</div></div></div></div>";
+                var htmlTwo = "";
+
+                var z = 0;
+
+                for (i = 0; i <  valorPadrao; i++) {
+//                    console.log("i preencher "+i);
+                    var htmlOne = "<div class='panel-group col-md-12' id='accordionP"+i+"'>"
+                        +"<div class='panel panel-default'><div class='panel-heading text-center bg-olive'>"
+                        +"<h4 class='panel-title'><a data-toggle='collapse' data-parent='#accordionP' href='#collapseP"+i+"'>"
+                        +"Marmita Pequena "+(i+1)+" </a></h4>"
+                        +"<input type='hidden' name='"+(i+1)+"C' value='"+mg[i].codigo+"'></div>"
+                        +"<div id='collapseP"+i+"' class='panel-collapse collapse'>"
+                        +"<div class='panel-body' id='divP"+i+"'>";
+                    $.each(JSON.parse(itens), function (j, obj) {
+                        htmlTwo += "<div class='form-check checkbox-inline'>"
+                            + "<input type='checkbox' name= '"+i+j+"P' class='form-check-input' id='inputItem' value='" + obj.codigo + "'>" +
+                            "<label class='form-check-label' for='labelItem'>" + obj.descricao + "</label>"
+                            + "</div>";
+                    });
+
+                    $('#containerPequena').append(htmlOne+htmlTwo+htmlThree);
+                    //console.log("i - "+i);
+                    $.ajax({
+                        url:'../../../itensMarmitasPequenas/'+mg[i].codigo,
+                        type:'GET',
+                        dataType:'json',
+                        success: function(result){
+
+                            $.each(JSON.parse(result), function (x, objItemMarmita) {
+                                //console.log(objItemMarmita.cod_item);
+                                //console.log("#div"+z);
+                                $("#divP"+z).find("input[type=checkbox][value="+objItemMarmita.cod_item+"]").prop("checked","true");
+                            });
+                            z++;
+                        }
+                    });
+                    htmlTwo = "";
+                }
+            }
+
             function doneTypingP () {
+
+//                console.log("ultima "+$('#containerGrande').children().last().attr('id'));
+                var valorAtual = $('#containerPequena .panel-group').length;
+
+                //console.log("valor Atual "+element);
+                var lastDiv = $('#containerPequena').children().last().attr('id');
+                if(lastDiv === undefined){
+                    r=-1;
+                }else{
+                    var r = lastDiv.replace('accordionP', '');
+                    //console.log("ultima "+r);
+                }
 
                 var itens = '<?php echo $itens ?>';
 
                 var htmlThree = "</div></div></div></div>";
                 var htmlTwo = "";
 
-                for (i = 0; i < $('#inputQtdPequena').val(); i++) {
-                    var htmlOne = "<div class='panel-group col-md-12' id='accordionP"+i+"'>"
-                        +"<div class='panel panel-default'><div class='panel-heading text-center bg-olive'>"
-                        +"<h4 class='panel-title'><a data-toggle='collapse' data-parent='#accordionP' href='#collapseP"+i+"'>"
-                        +"Marmita Pequena "+(i+1)+" </a></h4></div><div id='collapseP"+i+"' class='panel-collapse collapse'>"
-                        +"<div class='panel-body'>";
-                    $.each(JSON.parse(itens), function (j, obj) {
-                        htmlTwo += "<div class='form-check checkbox-inline'>"
-                            + "<input type='checkbox' name= '"+i+j+"P' checked='checked' class='form-check-input' id='inputItemP' value='" + obj.codigo + "'>" +
-                            "<label class='form-check-label' for='labelItemP'>" + obj.descricao + "</label>"
-                            + "</div>";
-                    });
+                var cont = 0;
+                var verificador = 0;
 
-                    $('#containerPequena').append(htmlOne+htmlTwo+htmlThree);
-                    htmlTwo = "";
+                var valorPadrao = $('#inputQtdPequena').prop('defaultValue');
+                var flagPadrao = 0;
+
+                if($('#inputQtdPequena').val() > valorAtual){
+                    if(valorAtual < valorPadrao){
+                        $('#containerPequena').empty();
+                        preencherItensP2(valorPadrao);
+                    }
+                    cont = $('#inputQtdPequena').val() - valorAtual;
+                    //r++;
+                    //console.log("cont "+cont);
+                }else{
+                    if(valorAtual > $('#inputQtdPequena').val()){
+                        cont = valorAtual - $('#inputQtdPequena').val();
+                        verificador = 1;
+                    }
                 }
+                if($('#inputQtdPequena').val() <= valorPadrao){
+                    $('#containerPequena').empty();
+                    preencherItensP();
+                    flagPadrao = 1;
+                }
+                if(verificador === 0 && flagPadrao === 0){
+                    for (i = 0; i < cont; i++) {
+                        r++;
+                        var htmlOne = "<div class='panel-group col-md-12' id='accordionP"+r+"'>"
+                            +"<div class='panel panel-default'><div class='panel-heading text-center bg-olive'>"
+                            +"<h4 class='panel-title'><a data-toggle='collapse' data-parent='#accordionP' href='#collapseP"+r+"'>"
+                            +"Marmita Pequena "+(r+1)+" </a></h4></div><div id='collapseP"+r+"' class='panel-collapse collapse'>"
+                            +"<div class='panel-body'>";
+                        $.each(JSON.parse(itens), function (j, obj) {
+                            htmlTwo += "<div class='form-check checkbox-inline'>"
+                                + "<input type='checkbox' name= '"+r+j+"P' checked='checked' class='form-check-input' id='inputItemP' value='" + obj.codigo + "'>" +
+                                "<label class='form-check-label' for='labelItem'>" + obj.descricao + "</label>"
+                                + "</div>";
+                        });
+
+                        $('#containerPequena').append(htmlOne+htmlTwo+htmlThree);
+                        htmlTwo = "";
+                    }
+                }
+                if(verificador === 1){
+                    var contador = r;
+                    for (i = 0; i < cont; i++) {
+                        //console.log('i '+i);
+                        //console.log($('#containerGrande').find('#accordion'+contador).attr('id'));
+                        $('#containerPequena').find('#accordionP'+contador).remove();
+                        contador--;
+                    }
+
+                }
+
             }
-
-
 
 
             $('#divEntrega').hide();

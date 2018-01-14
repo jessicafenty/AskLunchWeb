@@ -18,4 +18,10 @@ class ItensController extends Controller
             ->where('cod_marmita','=',$codMarmita)->get();
         return response()->json(json_encode($itens));
     }
+    public function itensMarmitasPequenas($codMarmita){
+        $itens = ItemMarmita::join('Marmita','Item_Marmita.cod_marmita','Marmita.codigo')
+            ->where('cod_categoria', '=', 2)
+            ->where('cod_marmita','=',$codMarmita)->get();
+        return response()->json(json_encode($itens));
+    }
 }

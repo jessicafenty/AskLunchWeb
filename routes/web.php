@@ -53,7 +53,10 @@ Route::group(['middleware' => ['web']], function (){
 //        Route::get('alterarStatusRecebido/{id}', 'AjaxController@alterarStatusRecebido');
         Route::get('adicionarEntregador/{id}/{entregador}', 'AjaxController@adicionarEntregador')->name('adicionarEntregador');
         Route::get('itensAtivos',array('as' => 'item.itens', 'uses' => 'ItensController@itensAtivos'));
+
         Route::get('itensMarmitas/{id}','ItensController@itensMarmitasGrandes');
+        Route::get('itensMarmitasPequenas/{id}','ItensController@itensMarmitasPequenas');
+
         Route::get('pedidosRecebidos',array('as' => 'pedido.recebido', 'uses' => 'AjaxController@selecionarRecebidos'));
         Route::get('pedidosProntos',array('as' => 'pedidos.prontos', 'uses' => 'AjaxController@selecionarProntos'));
         Route::get('pedidosProntos/{id}',array('as' => 'pedido.pronto', 'uses' => 'AjaxController@alterarStatusPronto'));

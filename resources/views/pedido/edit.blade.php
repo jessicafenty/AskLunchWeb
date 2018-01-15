@@ -386,8 +386,13 @@
                     if(valorAtual < valorPadrao){
                         $('#containerGrande').empty();
                         preencherItensG2(valorPadrao);
+                        r++;
+                        cont = $('#inputQtdGrande').val() - valorAtual;
+                        cont--;
+                    }else{
+
+                        cont = $('#inputQtdGrande').val() - valorAtual;
                     }
-                    cont = $('#inputQtdGrande').val() - valorAtual;
                     //r++;
                     //console.log("cont "+cont);
                 }else{
@@ -562,8 +567,13 @@
                     if(valorAtual < valorPadrao){
                         $('#containerPequena').empty();
                         preencherItensP2(valorPadrao);
+                        r++;
+                        cont = $('#inputQtdPequena').val() - valorAtual;
+                        cont--;
+                    }else{
+
+                        cont = $('#inputQtdPequena').val() - valorAtual;
                     }
-                    cont = $('#inputQtdPequena').val() - valorAtual;
                     //r++;
                     //console.log("cont "+cont);
                 }else{

@@ -30,6 +30,7 @@ class PedidoController extends Controller
     public function index()
     {
 //        $pedido = Pedido::all();
+        date_default_timezone_set('America/Sao_Paulo');
         $pedido = Pedido::where(DB::raw('DATE(data_pedido)'), '=', date("Y-m-d"))
             ->where('inativo', '=', '0')->get();
         $entregador = DB::table('Usuario')
@@ -218,9 +219,10 @@ class PedidoController extends Controller
         $marmitasPequenas = Marmita::where('cod_pedido','=',$pedido->codigo)->where('cod_categoria','=',2)->get();
         //dd(sizeof($marmitas));
         $itens = Item::where('status_item','=','Ativo')->where('inativo','=','0')->get();
-        $bebidas = BebidaVenda::where('cod_pedido','=',$pedido->codigo)->where('inativo','=','0')->get();
+        $bebidasPedido = BebidaVenda::where('cod_pedido','=',$pedido->codigo)->where('inativo','=','0')->get();
+        $bebidas = Bebida::where('inativo','=','0')->get();
         return view('pedido.edit', compact('pedido','formapagamento',
-            'cliente', 'horas', 'minutos', 'marmitasGrandes', 'marmitasPequenas', 'bebidas','itens'));
+            'cliente', 'horas', 'minutos', 'marmitasGrandes', 'marmitasPequenas', 'bebidas','itens','bebidasPedido'));
     }
 
     /**
@@ -232,6 +234,9 @@ class PedidoController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $fields = Input::get();
+        //dd($fields["1C"]);
+        //dd(ends_with($fields, 'C'));
         $pedido = Pedido::findOrFail($id);
         if($request->input('codigo') !=null){
             if($request->input('codigo') == 0) {
@@ -257,6 +262,100 @@ class PedidoController extends Controller
             $pedido->status = "Recebido";
             $pedido->entregador = "Padrão";
             $pedido->update();
+
+
+//
+            $categoriaGrande = Categoria::where('tamanho', '=', 'Grande')->get();
+            $cont = 1;
+            for ($i = 0; $i < $request->qtdGrande; $i++) {
+                if(isset($fields[$cont.'C'])){
+                    echo $fields[(string)$cont.'C'].'<br>';
+                    $marmitaGrande = Marmita::find($fields[(string)$cont.'C']);
+                    $marmitaGrande->categoria()->associate($categoriaGrande[0]['codigo']);
+                    $marmitaGrande->valor_vendido = $categoriaGrande[0]['valor'];
+                    $marmitaGrande->pedido()->associate($pedido);
+                    $marmitaGrande->update();
+                }else{
+                    $marmitaGrande = new Marmita();
+                    $marmitaGrande->categoria()->associate($categoriaGrande[0]['codigo']);
+                    $marmitaGrande->valor_vendido = $categoriaGrande[0]['valor'];
+                    $marmitaGrande->pedido()->associate($pedido);
+                    $marmitaGrande->save();
+                }
+
+
+                foreach ($fields as $name => $value) {
+                    $p = (string)$i;
+
+                    if (ends_with($name, 'G')) {
+                        if (starts_with($name, $p[0])) {
+                            $itemMarmitaG = ItemMarmita::where('cod_marmita','=',$marmitaGrande->codigo)
+                                ->where('cod_item','=',$value)->first();
+                            var_dump($itemMarmitaG->cod_marmita);
+                            if(isset($itemMarmitaG)){
+                                $itemMarmitaGrande = ItemMarmita::find($itemMarmitaG->cod_marmita);
+                                $itemMarmitaGrande->cod_marmita = $marmitaGrande->codigo;
+                                $itemMarmitaGrande->cod_item = $value;
+                                $itemMarmitaGrande->update();
+                            }else{
+                                $itemMarmitaGrande = new ItemMarmita();
+                                $itemMarmitaGrande->cod_marmita = $marmitaGrande->codigo;
+                                $itemMarmitaGrande->cod_item = $value;
+                                $itemMarmitaGrande->save();
+                            }
+                        }
+                    }
+                }
+                $cont++;
+            }
+
+//            $categoriaPequena = Categoria::where('tamanho', '=', 'Pequena')->get();
+//            for ($j = 0; $j < $request->qtdPequena; $j++) {
+//                $marmitaPequena = new Marmita();
+//                $marmitaPequena->categoria()->associate($categoriaPequena[0]['codigo']);
+//                $marmitaPequena->valor_vendido = $categoriaPequena[0]['valor'];
+//                $marmitaPequena->pedido()->associate($pedido);
+//                $marmitaPequena->save();
+//
+//                foreach ($fields as $name => $value) {
+//                    $p = (string)$j;
+//
+//                    if (ends_with($name, 'P')) {
+//                        if (starts_with($name, $p[0])) {
+//                            $itemMarmitaPequena = new ItemMarmita();
+//                            $itemMarmitaPequena->cod_marmita = $marmitaPequena->codigo;
+//                            $itemMarmitaPequena->cod_item = $value;
+//                            $itemMarmitaPequena->save();
+////                            echo $name.'<br>';
+////                            echo $value.'<br>';
+//
+//                        }
+//                    }
+//                }
+//            }
+
+
+//            foreach ($fields as $name => $value) {
+//                if (ends_with($name, 'B')) {
+//                    $arrBebidas = explode("-", $name);
+//                    if ($value != null) {
+//                        //$i=0;
+//                        //while($i < $value){
+//                        $bebida = new BebidaVenda();
+//                        $bebida->cod_bebida = $arrBebidas[0];
+//                        $valorBebida = Bebida::where('codigo', '=', $bebida->cod_bebida)->get();
+//                        $bebida->valor_unitario = $valorBebida[0]['valor'];
+//                        $bebida->qtd = $value;
+//                        $bebida->cod_pedido = $pedido->codigo;
+//                        $bebida->save();
+//                        //echo $arrBebidas[0].'-'.$value.'<br>';
+//                        //$i++;
+//                        //}
+//                    }
+//                }
+//            }
+
+//
             Session::flash('mensagem', 'Pedido atualizado com sucesso!');
         }else{
             Session::flash('mensagemErro', 'Favor escolher uma OPÇÃO!');

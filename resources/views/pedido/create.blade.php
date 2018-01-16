@@ -284,22 +284,56 @@
                 var htmlThree = "</div></div></div></div>";
                 var htmlTwo = "";
 
-                for (i = 0; i < $('#inputQtdGrande').val(); i++) {
-                    var htmlOne = "<div class='panel-group col-md-12' id='accordion"+i+"'>"
-                        +"<div class='panel panel-default'><div class='panel-heading text-center bg-navy'>"
-                        +"<h4 class='panel-title'><a data-toggle='collapse' data-parent='#accordion' href='#collapse"+i+"'>"
-                        +"Marmita Grande "+(i+1)+" </a></h4></div><div id='collapse"+i+"' class='panel-collapse collapse'>"
-                        +"<div class='panel-body'>";
-                    $.each(JSON.parse(itens), function (j, obj) {
-                        htmlTwo += "<div class='form-check checkbox-inline'>"
-                            + "<input type='checkbox' name= '"+i+j+"G' checked='checked' class='form-check-input' id='inputItem' value='" + obj.codigo + "'>" +
-                            "<label class='form-check-label' for='labelItem'>" + obj.descricao + "</label>"
-                            + "</div>";
-                    });
+                var valorAtual = $('#containerGrande .panel-group').length;
+                var cont = 0;
+                var r = 0;
+                var verificador = 0;
+                if(valorAtual !== 0){
+                    var lastDiv = $('#containerGrande').children().last().attr('id');
+                    if(lastDiv === undefined){
+                        r=-1;
+                    }else{
+                        var r = lastDiv.replace('accordion', '');
+                        console.log("ultima "+r);
+                    }
+                    if($('#inputQtdGrande').val() > valorAtual){
+                        cont = $('#inputQtdGrande').val() - valorAtual;
+                    }else{
+                        cont = valorAtual - $('#inputQtdGrande').val();
+                        verificador = 1;
+                    }
+                }else{
+                    cont = $('#inputQtdGrande').val();
+                }
+                if(verificador === 0){
+                    for (i = 0; i < cont; i++) {
+                        r++;
+                        var htmlOne = "<div class='panel-group col-md-12' id='accordion"+r+"'>"
+                            +"<div class='panel panel-default'><div class='panel-heading text-center bg-navy'>"
+                            +"<h4 class='panel-title'><a data-toggle='collapse' data-parent='#accordion' href='#collapse"+r+"'>"
+                            +"Marmita Grande "+(r)+" </a></h4></div><div id='collapse"+r+"' class='panel-collapse collapse'>"
+                            +"<div class='panel-body'>";
+                        $.each(JSON.parse(itens), function (j, obj) {
+                            htmlTwo += "<div class='form-check checkbox-inline'>"
+                                + "<input type='checkbox' name= '"+r+j+"G' checked='checked' class='form-check-input' id='inputItem' value='" + obj.codigo + "'>" +
+                                "<label class='form-check-label' for='labelItem'>" + obj.descricao + "</label>"
+                                + "</div>";
+                        });
 
                         $('#containerGrande').append(htmlOne+htmlTwo+htmlThree);
                         htmlTwo = "";
+                    }
+                }else{
+                    var contador = r;
+                    for (i = 0; i < cont; i++) {
+                        //console.log('i '+i);
+                        //console.log($('#containerGrande').find('#accordion'+contador).attr('id'));
+                        $('#containerGrande').find('#accordion'+contador).remove();
+                        contador--;
+                    }
                 }
+
+
             }
             function doneTypingP () {
 
@@ -308,21 +342,53 @@
                 var htmlThree = "</div></div></div></div>";
                 var htmlTwo = "";
 
-                for (i = 0; i < $('#inputQtdPequena').val(); i++) {
-                    var htmlOne = "<div class='panel-group col-md-12' id='accordionP"+i+"'>"
-                        +"<div class='panel panel-default'><div class='panel-heading text-center bg-olive'>"
-                        +"<h4 class='panel-title'><a data-toggle='collapse' data-parent='#accordionP' href='#collapseP"+i+"'>"
-                        +"Marmita Pequena "+(i+1)+" </a></h4></div><div id='collapseP"+i+"' class='panel-collapse collapse'>"
-                        +"<div class='panel-body'>";
-                    $.each(JSON.parse(itens), function (j, obj) {
-                        htmlTwo += "<div class='form-check checkbox-inline'>"
-                            + "<input type='checkbox' name= '"+i+j+"P' checked='checked' class='form-check-input' id='inputItemP' value='" + obj.codigo + "'>" +
-                            "<label class='form-check-label' for='labelItemP'>" + obj.descricao + "</label>"
-                            + "</div>";
-                    });
+                var valorAtual = $('#containerPequena .panel-group').length;
+                var cont = 0;
+                var r = 0;
+                var verificador = 0;
+                if(valorAtual !== 0){
+                    var lastDiv = $('#containerPequena').children().last().attr('id');
+                    if(lastDiv === undefined){
+                        r=-1;
+                    }else{
+                        var r = lastDiv.replace('accordionP', '');
+                    }
+                    if($('#inputQtdPequena').val() > valorAtual){
+                        cont = $('#inputQtdPequena').val() - valorAtual;
+                    }else{
+                        cont = valorAtual - $('#inputQtdPequena').val();
+                        verificador = 1;
+                    }
+                }else{
+                    cont = $('#inputQtdPequena').val();
+                }
 
-                    $('#containerPequena').append(htmlOne+htmlTwo+htmlThree);
-                    htmlTwo = "";
+                if(verificador === 0){
+                    for (i = 0; i < cont; i++) {
+                        r++;
+                        var htmlOne = "<div class='panel-group col-md-12' id='accordionP"+r+"'>"
+                            +"<div class='panel panel-default'><div class='panel-heading text-center bg-olive'>"
+                            +"<h4 class='panel-title'><a data-toggle='collapse' data-parent='#accordionP' href='#collapseP"+r+"'>"
+                            +"Marmita Pequena "+(r)+" </a></h4></div><div id='collapseP"+r+"' class='panel-collapse collapse'>"
+                            +"<div class='panel-body'>";
+                        $.each(JSON.parse(itens), function (j, obj) {
+                            htmlTwo += "<div class='form-check checkbox-inline'>"
+                                + "<input type='checkbox' name= '"+r+j+"P' checked='checked' class='form-check-input' id='inputItemP' value='" + obj.codigo + "'>" +
+                                "<label class='form-check-label' for='labelItemP'>" + obj.descricao + "</label>"
+                                + "</div>";
+                        });
+
+                        $('#containerPequena').append(htmlOne+htmlTwo+htmlThree);
+                        htmlTwo = "";
+                    }
+                }else{
+                    var contador = r;
+                    for (i = 0; i < cont; i++) {
+                        //console.log('i '+i);
+                        //console.log($('#containerGrande').find('#accordion'+contador).attr('id'));
+                        $('#containerPequena').find('#accordionP'+contador).remove();
+                        contador--;
+                    }
                 }
             }
 

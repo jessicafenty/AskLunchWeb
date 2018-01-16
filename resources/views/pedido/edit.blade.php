@@ -96,8 +96,31 @@
                             <div id="containerGrande" style="padding-top: 4%"></div>
                             <div id="containerPequena"></div>
 
+                            <div class="form-group" style="margin-bottom: 4%">
+                                <div class="text-center">
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" id="checkBebidas" name="checkAddBebidas"> Deseja adicionar bebidas a este pedido?
+                                    </label>
+                                </div>
+                            </div>
+                            <div id="divBebidas" class="form-group" style="border-style: groove; margin: auto; padding: 1%">
+                                @foreach($bebidas as $key=>$bebida)
+                                    <div class="form-inline text-center">
+                                        <div>
+                                            <label for="labelBebidas">{{$bebida['descricao']}} - {{$bebida['quantidade']}}</label>
+                                        </div>
 
-                            <div class="form-group">
+                                        <div>
+                                            <input type="number" class="form-control input-sm margin" name="{{$bebida['codigo']}}-B"
+                                                   value="0" placeholder="Quantidade">
+                                        </div>
+
+                                    </div>
+                                @endforeach
+                            </div>
+
+
+                            <div class="form-group" style="padding-top: 3%">
                                     <label for="idPagamento" class="control-label col-sm-2">
                                         <a href="{{route('formapagamento.create')}}">Pagamento</a>
                                     </label>
@@ -224,6 +247,34 @@
 @section('scriptlocal')
     <script type="text/javascript">
         $(document).ready(function () {
+
+            if($('#inputQtdGrande').val() === '0'){
+                $('#inputQtdGrande').attr('disabled', 'disabled');
+            }else{
+                $('#checkG').attr('checked', 'checked');
+            }
+            if($('#inputQtdPequena').val() === '0'){
+                $('#inputQtdPequena').attr('disabled', 'disabled');
+            }else{
+                $('#checkP').attr('checked', 'checked');
+            }
+            $("#checkG").click(function(){
+                if($('#checkG').is(':checked')){
+                    $('#inputQtdGrande').removeAttr('disabled');
+                }else{
+                    $('#inputQtdGrande').attr('disabled', 'disabled');
+                }
+            });
+            $("#checkP").click(function(){
+                if($('#checkP').is(':checked')){
+                    $('#inputQtdPequena').removeAttr('disabled');
+                }else{
+                    $('#inputQtdPequena').attr('disabled', 'disabled');
+                }
+            });
+
+
+
 
             var typingTimer;                //timer identifier
             var doneTypingInterval = 500;  //time in ms, 5 second for example
@@ -619,6 +670,33 @@
 
             }
 
+            var d = '<?php echo $bebidasPedido ?>';
+            var drinks = JSON.parse(d);
+            var inputsDrinks = $('#divBebidas .form-inline :input');
+            var testar = 0;
+
+           for(x=0;x<inputsDrinks.length;x++){
+
+               if (drinks[x] !== undefined) {
+                   $("input[name="+drinks[x].cod_bebida+"-B]").attr('value',drinks[x].qtd);
+                    testar = 1;
+               }
+           }
+           if(testar === 1){
+               $("#checkBebidas").attr('checked','checked');
+               $('#divBebidas').show();
+           }else{
+               $('#checkBebidas').removeAttr('checked');
+               $('#divBebidas').hide();
+           }
+            $("#checkBebidas").click(function(){
+                if($('#checkBebidas').is(':checked')){
+                    $('#divBebidas').show();
+                }else{
+                    $('#divBebidas').hide();
+                    $('#divBebidas input[type = number]').val("");
+                }
+            });
 
             $('#divEntrega').hide();
             $('#divRetirada').hide();

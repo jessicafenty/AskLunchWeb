@@ -23,6 +23,7 @@ class AjaxController extends Controller
     }
     public function selecionarRecebidos()
     {
+        date_default_timezone_set('America/Sao_Paulo');
         $pedido = Pedido::where('status', '=', 'Recebido')
             ->where('inativo', '=', '0')
             ->where(DB::raw('DATE(data_pedido)'), '=', date("Y-m-d"))
@@ -34,6 +35,7 @@ class AjaxController extends Controller
     }
     public function selecionarAndamento()
     {
+        date_default_timezone_set('America/Sao_Paulo');
         $pedido = Pedido::where('status', '=', 'Em Rota')
             ->where('inativo', '=', '0')
             ->where(DB::raw('DATE(data_pedido)'), '=', date("Y-m-d"))
@@ -45,6 +47,7 @@ class AjaxController extends Controller
     }
     public function selecionarFinalizados()
     {
+        date_default_timezone_set('America/Sao_Paulo');
         $pedido = Pedido::where('status', '=', 'Finalizado')
             ->where('inativo', '=', '0')
             ->where(DB::raw('DATE(data_pedido)'), '=', date("Y-m-d"))
@@ -56,6 +59,7 @@ class AjaxController extends Controller
     }
     public function selecionarCancelados()
     {
+        date_default_timezone_set('America/Sao_Paulo');
         $pedido = Pedido::where('status', '=', 'Cancelado')
             ->where('inativo', '=', '0')
             ->where(DB::raw('DATE(data_pedido)'), '=', date("Y-m-d"))
@@ -111,6 +115,7 @@ class AjaxController extends Controller
     }
     public function selecionarProntos()
     {
+        date_default_timezone_set('America/Sao_Paulo');
         $pedido = Pedido::where('status', '=', 'Pronto')
 //            ->where('entrega', '=', 1)
             ->where('entregador', '=', 'Padrão')
@@ -139,6 +144,7 @@ class AjaxController extends Controller
 
     public function showMarmitas($id)
     {
+        date_default_timezone_set('America/Sao_Paulo');
         $pedido = Pedido::findOrFail($id);
         $data = date('Y-m-d', strtotime($pedido->data_pedido));
         $codCliente = $pedido->cod_cliente;
@@ -182,6 +188,7 @@ WHERE Item_Marmita.cod_marmita = ".$id." ORDER BY Item.descricao"));
     }
     public function recriarPedido($id)
     {
+        date_default_timezone_set('America/Sao_Paulo');
         $pedido = Pedido::findOrFail($id);
         $novoPedido = new Pedido();
         $novoPedido->data_pedido = date("Y-m-d");
@@ -204,6 +211,7 @@ WHERE Item_Marmita.cod_marmita = ".$id." ORDER BY Item.descricao"));
     }
     public function selecionarExtraviados()
     {
+        date_default_timezone_set('America/Sao_Paulo');
         $pedido = Pedido::where('status', '=', 'Extraviado')
             ->where('inativo', '=', '0')
             ->where(DB::raw('DATE(data_pedido)'), '=', date("Y-m-d"))

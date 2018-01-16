@@ -263,52 +263,61 @@ class PedidoController extends Controller
             $pedido->entregador = "Padrão";
             $pedido->update();
 
+            $categoriaGrande = Categoria::where('tamanho', '=', 'Grande')->first();
 
-//
-            $categoriaGrande = Categoria::where('tamanho', '=', 'Grande')->get();
+
             $cont = 1;
+            $arrCodigos = [];
             for ($i = 0; $i < $request->qtdGrande; $i++) {
                 if(isset($fields[$cont.'C'])){
-                    echo $fields[(string)$cont.'C'].'<br>';
-                    $marmitaGrande = Marmita::find($fields[(string)$cont.'C']);
-                    $marmitaGrande->categoria()->associate($categoriaGrande[0]['codigo']);
-                    $marmitaGrande->valor_vendido = $categoriaGrande[0]['valor'];
-                    $marmitaGrande->pedido()->associate($pedido);
-                    $marmitaGrande->update();
-                }else{
-                    $marmitaGrande = new Marmita();
-                    $marmitaGrande->categoria()->associate($categoriaGrande[0]['codigo']);
-                    $marmitaGrande->valor_vendido = $categoriaGrande[0]['valor'];
-                    $marmitaGrande->pedido()->associate($pedido);
-                    $marmitaGrande->save();
+                    $mg = Marmita::where('codigo','=',(int)$fields[(string)$cont.'C'])->first();
+                    if(isset($mg)){
+                        $marmitaGrande = Marmita::find($mg->codigo);
+                        $marmitaGrande->cod_categoria = $categoriaGrande->codigo;
+                        $marmitaGrande->valor_vendido = $categoriaGrande->valor;
+                        $marmitaGrande->pedido()->associate($pedido);
+                        $marmitaGrande->update();
+                        $arrCodigos[$i] = $marmitaGrande->codigo;
+                    }else{
+                        if((int)$fields[(string)$cont.'C'] === 0){
+                            $marmitaGrande = new Marmita();
+                            $marmitaGrande->categoria()->associate($categoriaGrande->codigo);
+                            $marmitaGrande->valor_vendido = $categoriaGrande->valor;
+                            $marmitaGrande->pedido()->associate($pedido);
+                            $marmitaGrande->save();
+                            $arrCodigos[$i] = $marmitaGrande->codigo;
+                        }
+                    }
+
                 }
 
-
+                ItemMarmita::where('cod_marmita','=',$marmitaGrande->codigo)->delete();
                 foreach ($fields as $name => $value) {
                     $p = (string)$i;
 
                     if (ends_with($name, 'G')) {
                         if (starts_with($name, $p[0])) {
-                            $itemMarmitaG = ItemMarmita::where('cod_marmita','=',$marmitaGrande->codigo)
-                                ->where('cod_item','=',$value)->first();
-                            var_dump($itemMarmitaG->cod_marmita);
-                            if(isset($itemMarmitaG)){
-                                $itemMarmitaGrande = ItemMarmita::find($itemMarmitaG->cod_marmita);
-                                $itemMarmitaGrande->cod_marmita = $marmitaGrande->codigo;
-                                $itemMarmitaGrande->cod_item = $value;
-                                $itemMarmitaGrande->update();
-                            }else{
-                                $itemMarmitaGrande = new ItemMarmita();
-                                $itemMarmitaGrande->cod_marmita = $marmitaGrande->codigo;
-                                $itemMarmitaGrande->cod_item = $value;
-                                $itemMarmitaGrande->save();
-                            }
+                            $itemMarmitaGrande = new ItemMarmita();
+                            $itemMarmitaGrande->cod_marmita = $marmitaGrande->codigo;
+                            $itemMarmitaGrande->cod_item = $value;
+                            $itemMarmitaGrande->save();
                         }
                     }
                 }
                 $cont++;
             }
+            $marmitasGrandes = Marmita::where('cod_pedido','=',$pedido->codigo)->where('cod_categoria','=',1)->get();
+//            dd($arrCodigos);
+            for($j=0;$j<sizeof($marmitasGrandes);$j++) {
 
+                if(!in_array($marmitasGrandes[$j]['codigo'], $arrCodigos)){
+                    ItemMarmita::where('cod_marmita', '=', $marmitasGrandes[$j]['codigo'])->delete();
+                    Marmita::where('codigo', '=', $marmitasGrandes[$j]['codigo'])->delete();
+//                    echo $marmitasGrandes[$j]['codigo'].' não existe'.'<br>';
+                }
+            }
+
+                //dd(sizeof($arrCodigos));
 //            $categoriaPequena = Categoria::where('tamanho', '=', 'Pequena')->get();
 //            for ($j = 0; $j < $request->qtdPequena; $j++) {
 //                $marmitaPequena = new Marmita();
@@ -356,6 +365,7 @@ class PedidoController extends Controller
 //            }
 
 //
+
             Session::flash('mensagem', 'Pedido atualizado com sucesso!');
         }else{
             Session::flash('mensagemErro', 'Favor escolher uma OPÇÃO!');

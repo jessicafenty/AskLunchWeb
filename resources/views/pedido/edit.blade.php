@@ -463,7 +463,9 @@
                         var htmlOne = "<div class='panel-group col-md-12' id='accordion"+r+"'>"
                             +"<div class='panel panel-default'><div class='panel-heading text-center bg-navy'>"
                             +"<h4 class='panel-title'><a data-toggle='collapse' data-parent='#accordion' href='#collapse"+r+"'>"
-                            +"Marmita Grande "+(r+1)+" </a></h4></div><div id='collapse"+r+"' class='panel-collapse collapse'>"
+                            +"Marmita Grande "+(r+1)+" </a></h4>"
+                            +"<input type='hidden' name='"+(r+1)+"C' value='"+0+"'></div>"
+                            +"</div><div id='collapse"+r+"' class='panel-collapse collapse'>"
                             +"<div class='panel-body'>";
                         $.each(JSON.parse(itens), function (j, obj) {
                             htmlTwo += "<div class='form-check checkbox-inline'>"

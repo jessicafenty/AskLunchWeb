@@ -42,6 +42,13 @@
             </li>
             <li class="active">
 
+                <a href="{{route('cliente.index')}}">
+                    <i class="fa fa-user-circle-o"></i>
+                    <span>Clientes do Restaurante</span>
+                </a>
+            </li>
+            <li class="active">
+
                 <a href="{{route('item.index')}}">
                     <i class="fa fa-cutlery"></i>
                     <span>Itens das Marmitas</span>

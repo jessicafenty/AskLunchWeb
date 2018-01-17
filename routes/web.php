@@ -39,6 +39,7 @@ Route::group(['middleware' => ['web']], function (){
 
     Route::group(['middleware' => ['auth']], function (){
         Route::resource('funcionario', 'FuncionarioController');
+        Route::resource('cliente', 'ClienteController');
         Route::resource('categoria', 'CategoriaController');
         Route::resource('formapagamento', 'FormaPagamentoController');
         Route::resource('bebida', 'BebidaController');

@@ -16,7 +16,10 @@ class FuncionarioController extends Controller
      */
     public function index()
     {
-        $funcionario = Funcionario::where('inativo', '=', '0')->get();
+        $funcionario = Funcionario::join('Usuario', 'Cliente.codigo', 'Usuario.cod_cliente')
+            ->where('Usuario.inativo', '=', '0')
+            ->where('Usuario.tipo', '<>', 'Cliente')
+            ->get();
         return view('funcionario.index', compact('funcionario'));
     }
 
@@ -28,7 +31,7 @@ class FuncionarioController extends Controller
     public function create()
     {
         $funcionario = Funcionario::all();
-        return view('funcionario.create', compact($funcionario));
+        return view('funcionario.create', compact('funcionario'));
     }
 
     /**
@@ -99,7 +102,6 @@ class FuncionarioController extends Controller
     public function edit($id)
     {
         $funcionario = Funcionario::findOrFail($id);
-
         return view('funcionario.edit', compact('funcionario'));
     }
 

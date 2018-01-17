@@ -191,13 +191,29 @@ class PedidoController extends Controller
         $pedido = Pedido::findOrFail($id);
         $cliente = Funcionario::findOrFail($pedido->cod_cliente);
         $usuario = Usuario::findOrFail($pedido->cod_cliente);
+
+
+        date_default_timezone_set('America/Sao_Paulo');
+        $data = date('Y-m-d', strtotime($pedido->data_pedido));
+        $codCliente = $pedido->cod_cliente;
+//        echo $date;
+        $marmitas = DB::select(DB::raw("SELECT Cliente.nome, Pedido.codigo,
+        Categoria_Marmita.tamanho AS tamanho, Marmita.codigo AS cod_marmita
+        FROM Cliente INNER JOIN Pedido ON (Cliente.codigo = Pedido.cod_cliente)
+        INNER JOIN Marmita ON (Pedido.codigo = Marmita.cod_pedido)
+        INNER JOIN Categoria_Marmita ON (Marmita.cod_categoria = Categoria_Marmita.codigo)
+        WHERE DATE (Pedido.data_pedido) = '".$data."' AND Cliente.codigo = ".$codCliente));
+
+
+
 //        dd($usuario->email);
 //        return view('pedido.show', compact('pedido'));
         return View::make('pedido.show')
             ->with('activePedido','active treeview')
             ->with('pedido',$pedido)
             ->with('cliente',$cliente)
-            ->with('usuario',$usuario);
+            ->with('usuario',$usuario)
+            ->with('marmitas',$marmitas);
     }
 
     /**
@@ -265,7 +281,6 @@ class PedidoController extends Controller
 
             $categoriaGrande = Categoria::where('tamanho', '=', 'Grande')->first();
 
-
             $cont = 1;
             $arrCodigos = [];
             for ($i = 0; $i < $request->qtdGrande; $i++) {
@@ -317,54 +332,99 @@ class PedidoController extends Controller
                 }
             }
 
-                //dd(sizeof($arrCodigos));
-//            $categoriaPequena = Categoria::where('tamanho', '=', 'Pequena')->get();
-//            for ($j = 0; $j < $request->qtdPequena; $j++) {
-//                $marmitaPequena = new Marmita();
-//                $marmitaPequena->categoria()->associate($categoriaPequena[0]['codigo']);
-//                $marmitaPequena->valor_vendido = $categoriaPequena[0]['valor'];
-//                $marmitaPequena->pedido()->associate($pedido);
-//                $marmitaPequena->save();
-//
-//                foreach ($fields as $name => $value) {
-//                    $p = (string)$j;
-//
-//                    if (ends_with($name, 'P')) {
-//                        if (starts_with($name, $p[0])) {
-//                            $itemMarmitaPequena = new ItemMarmita();
-//                            $itemMarmitaPequena->cod_marmita = $marmitaPequena->codigo;
-//                            $itemMarmitaPequena->cod_item = $value;
-//                            $itemMarmitaPequena->save();
-////                            echo $name.'<br>';
-////                            echo $value.'<br>';
-//
-//                        }
-//                    }
-//                }
-//            }
+            //MARMITAS PEQUENAS
 
+            $categoriaPequena = Categoria::where('tamanho', '=', 'Pequena')->first();
 
-//            foreach ($fields as $name => $value) {
-//                if (ends_with($name, 'B')) {
-//                    $arrBebidas = explode("-", $name);
-//                    if ($value != null) {
-//                        //$i=0;
-//                        //while($i < $value){
-//                        $bebida = new BebidaVenda();
-//                        $bebida->cod_bebida = $arrBebidas[0];
-//                        $valorBebida = Bebida::where('codigo', '=', $bebida->cod_bebida)->get();
-//                        $bebida->valor_unitario = $valorBebida[0]['valor'];
-//                        $bebida->qtd = $value;
-//                        $bebida->cod_pedido = $pedido->codigo;
-//                        $bebida->save();
-//                        //echo $arrBebidas[0].'-'.$value.'<br>';
-//                        //$i++;
-//                        //}
-//                    }
-//                }
-//            }
+            $contPequena = 1;
+            $arrCodigosPequena = [];
+            for ($i = 0; $i < $request->qtdPequena; $i++) {
+                if(isset($fields[$contPequena.'D'])){
+                    $mp = Marmita::where('codigo','=',(int)$fields[(string)$contPequena.'D'])->first();
+                    if(isset($mp)){
+                        $marmitaPequena = Marmita::find($mp->codigo);
+                        $marmitaPequena->cod_categoria = $categoriaPequena->codigo;
+                        $marmitaPequena->valor_vendido = $categoriaPequena->valor;
+                        $marmitaPequena->pedido()->associate($pedido);
+                        $marmitaPequena->update();
+                        $arrCodigosPequena[$i] = $marmitaPequena->codigo;
+                    }else{
+                        if((int)$fields[(string)$contPequena.'D'] === 0){
+                            $marmitaPequena = new Marmita();
+                            $marmitaPequena->categoria()->associate($categoriaPequena->codigo);
+                            $marmitaPequena->valor_vendido = $categoriaPequena->valor;
+                            $marmitaPequena->pedido()->associate($pedido);
+                            $marmitaPequena->save();
+                            $arrCodigosPequena[$i] = $marmitaPequena->codigo;
+                        }
+                    }
 
-//
+                }
+
+                ItemMarmita::where('cod_marmita','=',$marmitaPequena->codigo)->delete();
+                foreach ($fields as $name => $value) {
+                    $p = (string)$i;
+
+                    if (ends_with($name, 'P')) {
+                        if (starts_with($name, $p[0])) {
+                            $itemMarmitaPequena = new ItemMarmita();
+                            $itemMarmitaPequena->cod_marmita = $marmitaPequena->codigo;
+                            $itemMarmitaPequena->cod_item = $value;
+                            $itemMarmitaPequena->save();
+                        }
+                    }
+                }
+                $contPequena++;
+            }
+            $marmitasPequenas = Marmita::where('cod_pedido','=',$pedido->codigo)->where('cod_categoria','=',2)->get();
+//            dd($arrCodigos);
+            for($j=0;$j<sizeof($marmitasPequenas);$j++) {
+
+                if(!in_array($marmitasPequenas[$j]['codigo'], $arrCodigosPequena)){
+                    ItemMarmita::where('cod_marmita', '=', $marmitasPequenas[$j]['codigo'])->delete();
+                    Marmita::where('codigo', '=', $marmitasPequenas[$j]['codigo'])->delete();
+//                    echo $marmitasGrandes[$j]['codigo'].' não existe'.'<br>';
+                }
+            }
+
+            $arrCodBebidas = [];
+            foreach ($fields as $name => $value) {
+                if (ends_with($name, 'B')) {
+                    $arrBebidas = explode("-", $name);
+                    if ($value != null) {
+                        $b = BebidaVenda::where('cod_pedido','=',$pedido->codigo)
+                            ->where('codigo','=',$arrBebidas[0])->first();
+                        if($b){
+                            $bebida = BebidaVenda::find($b->codigo);
+                            $bebida->cod_bebida = $arrBebidas[0];
+                            $valorBebida = Bebida::where('codigo', '=', $bebida->cod_bebida)->first();
+                            $bebida->valor_unitario = $valorBebida->valor;
+                            $bebida->qtd = $value;
+                            $bebida->cod_pedido = $pedido->codigo;
+                            $bebida->update();
+                            $arrCodBebidas[$i] = $bebida->codigo;
+                        }else{
+                            $bebida = new BebidaVenda();
+                            $bebida->cod_bebida = $arrBebidas[0];
+                            $valorBebida = Bebida::where('codigo', '=', $bebida->cod_bebida)->first();
+                            $bebida->valor_unitario = $valorBebida->valor;
+                            $bebida->qtd = $value;
+                            $bebida->cod_pedido = $pedido->codigo;
+                            $bebida->save();
+                            $arrCodBebidas[$i] = $bebida->codigo;
+                        }
+                    }
+                }
+            }
+            $drinks = BebidaVenda::where('cod_pedido','=',$pedido->codigo)->get();
+            for($y=0;$y<sizeof($drinks);$y++) {
+
+                if(!in_array($drinks[$y]['codigo'], $arrCodBebidas)){
+                    BebidaVenda::where('cod_pedido','=',$pedido->codigo)
+                        ->where('codigo','=',$drinks[$y]['codigo'])->delete();
+                }
+            }
+
 
             Session::flash('mensagem', 'Pedido atualizado com sucesso!');
         }else{

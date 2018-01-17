@@ -58,7 +58,7 @@
                             </div>
                             <h3 style="background-color: white; text-align: center">Informações de Pedido</h3>
                             <div style="border-style: solid; padding: 5px;border-color: white; font-size: large">
-                                <strong>Entrega: </strong> {{$pedido->entrega}}<br>
+                                <strong>Entrega: </strong> {{$pedido->entrega === 0 ? 'Não' : 'Sim'}}<br>
                                 <strong>Horário: </strong> {{$pedido->horario}}<br>
                                 <strong>Status: </strong> {{$pedido->status}}<br>
                                 <strong>Entregador: </strong> {{$pedido->entregador === 'Padrão' ? '-' : $pedido->entregador}}<br>
@@ -70,6 +70,16 @@
                                 <strong>Número: </strong> {{$pedido->numero}}<br>
                                 <strong>Quadra: </strong> {{$pedido->quadra}}<br>
                                 <strong>Lote: </strong> {{$pedido->lote}}<br>
+                            </div>
+                            <h3 style="background-color: white; text-align: center">Marmitas</h3>
+                            <div style="border-style: solid; padding: 5px;border-color: white; font-size: large" id="marmitas">
+                                @foreach($marmitas as $m)
+                                    <a href="##" name="option" id="{{$m->cod_marmita}}">{{$m->cod_marmita ." - ". $m->tamanho}}</a><br>
+                                @endforeach
+                            </div>
+                            <h3 style="background-color: white; text-align: center">Itens da Marmita</h3>
+                            <div style="border-style: solid; padding: 5px;border-color: white; font-size: large" id="itens">
+                                {{--<strong>Teste</strong><br>--}}
                             </div>
 
                         </div>
@@ -86,4 +96,30 @@
         </div>
 
     </div>
+@endsection
+@section('scriptlocal')
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#itens').hide();
+//          $('#marmitas').click(function(){
+//              $('#itens').show();
+//          });
+            $('a[name="option"]').click(function() {
+                $('#itens').show();
+                //alert($(this).attr('id'));
+                $.ajax({
+                    url: '../../itens/' + $(this).attr('id'),
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (json) {
+                        $('#itens').empty();
+                        $.each(JSON.parse(json), function (i, obj) {
+                            $('#itens').append(obj.descricao.concat("<br>"));
+                        })
+                    }
+                });
+            });
+
+        });
+    </script>
 @endsection

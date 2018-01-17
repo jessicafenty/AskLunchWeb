@@ -131,7 +131,7 @@
                                         {{--</td>--}}
                                         {{--<td>{{$c->entregador}}</td>--}}
                                         <td align="center">
-                                            <a href="{{route('pedido.marmitas',$c->codigo)}}" class="btn btn-small btn-info">
+                                            <a href="{{route('pedido.show',$c->codigo)}}" class="btn btn-small btn-info">
                                                 <i class="fa fa-search-plus"></i>
                                             </a>
                                             <a href="{{route('pedido.edit',$c->codigo)}}" class="btn btn-small btn-default" style="background-color: goldenrod;color: white">

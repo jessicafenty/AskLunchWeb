@@ -513,7 +513,7 @@
                         +"<div class='panel panel-default'><div class='panel-heading text-center bg-olive'>"
                         +"<h4 class='panel-title'><a data-toggle='collapse' data-parent='#accordionP' href='#collapseP"+i+"'>"
                         +"Marmita Pequena "+(i+1)+" </a></h4>"
-                        +"<input type='hidden' name='"+(i+1)+"C' value='"+mg[i].codigo+"'></div>"
+                        +"<input type='hidden' name='"+(i+1)+"D' value='"+mg[i].codigo+"'></div>"
                         +"<div id='collapseP"+i+"' class='panel-collapse collapse'>"
                         +"<div class='panel-body' id='divP"+i+"'>";
                     $.each(JSON.parse(itens), function (j, obj) {
@@ -561,7 +561,7 @@
                         +"<div class='panel panel-default'><div class='panel-heading text-center bg-olive'>"
                         +"<h4 class='panel-title'><a data-toggle='collapse' data-parent='#accordionP' href='#collapseP"+i+"'>"
                         +"Marmita Pequena "+(i+1)+" </a></h4>"
-                        +"<input type='hidden' name='"+(i+1)+"C' value='"+mg[i].codigo+"'></div>"
+                        +"<input type='hidden' name='"+(i+1)+"D' value='"+mg[i].codigo+"'></div>"
                         +"<div id='collapseP"+i+"' class='panel-collapse collapse'>"
                         +"<div class='panel-body' id='divP"+i+"'>";
                     $.each(JSON.parse(itens), function (j, obj) {
@@ -646,7 +646,9 @@
                         var htmlOne = "<div class='panel-group col-md-12' id='accordionP"+r+"'>"
                             +"<div class='panel panel-default'><div class='panel-heading text-center bg-olive'>"
                             +"<h4 class='panel-title'><a data-toggle='collapse' data-parent='#accordionP' href='#collapseP"+r+"'>"
-                            +"Marmita Pequena "+(r+1)+" </a></h4></div><div id='collapseP"+r+"' class='panel-collapse collapse'>"
+                            +"Marmita Pequena "+(r+1)+" </a></h4>"
+                            +"<input type='hidden' name='"+(r+1)+"D' value='"+0+"'></div>"
+                            +"</div><div id='collapseP"+r+"' class='panel-collapse collapse'>"
                             +"<div class='panel-body'>";
                         $.each(JSON.parse(itens), function (j, obj) {
                             htmlTwo += "<div class='form-check checkbox-inline'>"
@@ -702,6 +704,7 @@
 
             $('#divEntrega').hide();
             $('#divRetirada').hide();
+
             $.ajax({
                 url:'../../enderecoPedido/'+$('#cliente').val(),
                 type:'GET',

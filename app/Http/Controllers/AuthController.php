@@ -14,9 +14,9 @@ class AuthController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
-//    public function login(){
-//        return view('auth.login');
-//    }
+    public function login(){
+        return view('auth.login');
+    }
 //    public function register(){
 //        return view('auth.register');
 //    }
@@ -29,11 +29,11 @@ class AuthController extends Controller
         if (! is_null($usuario)) {
             if (Hash::check($senha, $usuario->senha)) {
                 Auth::loginUsingId($usuario->codigo, false);
-                return redirect('dashboard');
+                return redirect('home');
             }
         }
         return redirect()->back()
-            ->with('fail', 'Usuário ou senha inválidos')
+            ->with('fail', 'Usuário e/ou senha inválidos!')
             ->withInput();
     }
 

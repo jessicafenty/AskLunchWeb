@@ -26,7 +26,7 @@ Route::get('/', function () {
 Route::group(['middleware' => ['web']], function (){
     //Route::group(['prefix' => 'auth'], function (){
 
-        //Route::get('login', array('as' => 'auth.login', 'uses' => 'AuthController@login'));
+        Route::get('login', array('as' => 'auth.login', 'uses' => 'AuthController@login'));
 
         Route::post('login', array('as' => 'login.attempt', 'uses' => 'AuthController@attempt'));
 

@@ -28,6 +28,10 @@ Route::group(['middleware' => ['web']], function (){
 
         Route::get('login', array('as' => 'auth.login', 'uses' => 'AuthController@login'));
 
+        Route::get('recuperarSenha', array('as' => 'auth.recuperar.senha', 'uses' => 'AuthController@formRecuperar'));
+
+        Route::post('enviarEmail', array('as' => 'auth.enviar.email', 'uses' => 'AuthController@enviarEmail'));
+
         Route::post('login', array('as' => 'login.attempt', 'uses' => 'AuthController@attempt'));
 
         //Route::get('register', array('as' => 'auth.register', 'uses' => 'AuthController@register'));
@@ -38,7 +42,12 @@ Route::group(['middleware' => ['web']], function (){
         Route::get('logout',array('as' => 'auth.logout', 'uses' => 'AuthController@logout'));
 
     Route::group(['middleware' => ['auth']], function (){
-        Route::resource('funcionario', 'FuncionarioController');
+//        if (Auth::check()) {
+//            if (Auth::user()->tipo === 'Administrador') {
+//                Route::resource('funcionario', 'FuncionarioController');
+//            }
+//        }
+
         Route::resource('cliente', 'ClienteController');
         Route::resource('categoria', 'CategoriaController');
         Route::resource('formapagamento', 'FormaPagamentoController');
@@ -80,5 +89,8 @@ Route::group(['middleware' => ['web']], function (){
     });
     Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function (){
         Route::get('/', array('as' => 'dashboard', 'uses' => 'DashboardController@index'));
+    });
+    Route::group(['middleware' => ['auth', 'admin']], function() {
+        Route::resource('funcionario', 'FuncionarioController');
     });
 });

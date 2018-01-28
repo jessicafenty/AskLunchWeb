@@ -11,7 +11,7 @@
                     <img src="{{ Gravatar::get($user->email) }}" class="img-circle" alt="User Image" />
                 </div>
                 <div class="pull-left info">
-                    <p>{{ Auth::user()->name }}</p>
+                    <p>{{ \App\Funcionario::select('nome')->where('codigo',Auth::user()->cod_cliente)->first()->nome }}</p>
                     <!-- Status -->
                     <a href="#"><i class="fa fa-circle text-success"></i> {{ trans('adminlte_lang::message.online') }}</a>
                 </div>
@@ -33,13 +33,14 @@
         <ul class="sidebar-menu">
             <li class="header" style="text-align: center">Menu</li>
 
+            @if(Auth::user()->tipo === 'Administrador')
             <li class="active">
-
                 <a href="{{route('funcionario.index')}}">
                     <i class="fa fa-user-plus"></i>
                     <span>Funcionários do Restaurante</span>
                 </a>
             </li>
+            @endif
             <li class="active">
 
                 <a href="{{route('cliente.index')}}">

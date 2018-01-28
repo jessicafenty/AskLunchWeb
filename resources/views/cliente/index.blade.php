@@ -99,7 +99,7 @@
                                                         </div>
 
                                                         <div class="modal-footer">
-                                                            {!! Form::open(array('route' => array('cliente.destroy', $c->cod_cliente), 'method' => 'delete')) !!}
+                                                            {!! Form::open(array('route' => array('cliente.destroy', $c->codigo), 'method' => 'delete')) !!}
                                                             {!! csrf_field() !!}
                                                             <button class="btn btn-danger" type="submit">Excluir</button>
                                                             <button class="btn btn-default" type="button" data-dismiss="modal">Cancelar</button>

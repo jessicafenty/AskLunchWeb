@@ -175,7 +175,7 @@ class PedidoController extends Controller
                 Session::flash('mensagemErro', 'Favor escolher uma OPÇÃO!');
             }
         }catch (\Exception $exception){
-            echo 'Erro: '.$exception;
+            dd($exception);
         }
         return redirect('/pedido/create');
     }

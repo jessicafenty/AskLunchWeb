@@ -5,7 +5,11 @@ namespace App\Http\Controllers;
 use App\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
 {
@@ -27,10 +31,15 @@ class AuthController extends Controller
             ->first();
 
         if (! is_null($usuario)) {
-            if (Hash::check($senha, $usuario->senha)) {
+//            if (Hash::check($senha, $usuario->senha)) {
+            $decrypted = Crypt::decryptString($usuario->senha);
+//            dd($decrypted);
+            if($senha === $decrypted){
+//                dd('teste');
                 Auth::loginUsingId($usuario->codigo, false);
                 return redirect('home');
             }
+
         }
         return redirect()->back()
             ->with('fail', 'Usuário e/ou senha inválidos!')
@@ -52,6 +61,28 @@ class AuthController extends Controller
         $usuario->save();
 
         return redirect()->back();
+    }
+
+    public function enviarEmail(Request $request){
+            $usuario = Usuario::join('Cliente', 'Usuario.cod_cliente', 'Cliente.codigo')->
+            where('email', $request->email)->first();
+            if(isset($usuario)) {
+                $decrypted = Crypt::decryptString($usuario->senha);
+                $data = array('nome' => $usuario->nome, 'senha' => $decrypted);
+                Mail::send('auth.mensagem', $data , function ($message) use ($usuario) {
+                    $message->to($usuario->email)->subject
+                    ('AskLunchWeb - Recuperação de Senha');
+                });
+                Session::flash('mensagemOK', "Operação realizada com sucesso! Verifique seu email.");
+                return redirect()->route('auth.login');
+            }else{
+                return redirect()->back()
+                    ->with('mensagem', 'Email não cadastrado!')
+                    ->withInput();
+            }
+    }
+    public function formRecuperar(){
+        return view('auth.recuperar');
     }
 
     public function logout(){

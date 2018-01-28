@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Funcionario;
 use App\Http\Requests\FuncionarioRequest;
 use App\Usuario;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Session;
 
 class FuncionarioController extends Controller
@@ -19,7 +20,13 @@ class FuncionarioController extends Controller
         $funcionario = Funcionario::join('Usuario', 'Cliente.codigo', 'Usuario.cod_cliente')
             ->where('Usuario.inativo', '=', '0')
             ->where('Usuario.tipo', '<>', 'Cliente')
-            ->get();
+            ->get(['Usuario.codigo AS codigo_usuario',
+                'Usuario.email AS email',
+                'Usuario.senha AS senha',
+                'Usuario.tipo AS tipo',
+                'Usuario.cod_cliente AS cod_cliente',
+                'Usuario.inativo AS usuario_inativo',
+                'Cliente.*']);
         return view('funcionario.index', compact('funcionario'));
     }
 
@@ -42,6 +49,13 @@ class FuncionarioController extends Controller
      */
     public function store(FuncionarioRequest $request)
     {
+//        if($request->input('ihcoordenadas') != null){
+//            $caracteres = array('(', ')', ' ');
+//            $varCoordenadas = str_replace($caracteres,'',$request->input('ihcoordenadas'));
+//            dd($varCoordenadas);
+//        }else{
+//            dd($request);
+//        }
 
         $funcionario = new Funcionario();
         $funcionario->nome = $request->input('nome');
@@ -54,7 +68,9 @@ class FuncionarioController extends Controller
         $funcionario->numero = $request->input('numero');
         $funcionario->quadra = $request->input('quadra');
         $funcionario->lote = $request->input('lote');
-        $funcionario->coordenadas = "0,0";
+        $caracteres = array('(', ')', ' ');
+        $varCoordenadas = str_replace($caracteres,'',$request->input('ihcoordenadas'));
+        $funcionario->coordenadas = $varCoordenadas;
 
         $funcionario->save();
 
@@ -64,7 +80,9 @@ class FuncionarioController extends Controller
 
                 $usuario = new Usuario();
                 $usuario->email = $request->input('email');
-                $usuario->senha = bcrypt($request->input('senha'));
+//                $usuario->senha = bcrypt($request->input('senha'));
+                $encrypted = Crypt::encryptString($request->input('senha'));
+                $usuario->senha = $encrypted;
                 $usuario->tipo = $request->input('tipo');
 
                 $usuario->funcionario()->associate($funcionario);
@@ -148,7 +166,9 @@ class FuncionarioController extends Controller
 
                 $usuario = Usuario::where('cod_cliente',$id)->first();
                 $usuario->email = $request->input('email');
-                $usuario->senha = bcrypt($request->input('senha'));
+//                $usuario->senha = bcrypt($request->input('senha'));
+                $encrypted = Crypt::encryptString($request->input('senha'));
+                $usuario->senha = $encrypted;
                 $usuario->tipo = $request->input('tipo');
 
                 $usuario->funcionario()->associate($funcionario);

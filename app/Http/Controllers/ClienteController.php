@@ -19,7 +19,13 @@ class ClienteController extends Controller
         $cliente = Funcionario::join('Usuario', 'Cliente.codigo', 'Usuario.cod_cliente')
         ->where('Usuario.inativo', '=', '0')
         ->where('Usuario.tipo', '=', 'Cliente')
-        ->get();
+        ->get(['Usuario.codigo AS codigo_usuario',
+            'Usuario.email AS email',
+            'Usuario.senha AS senha',
+            'Usuario.tipo AS tipo',
+            'Usuario.cod_cliente AS cod_cliente',
+            'Usuario.inativo AS usuario_inativo',
+            'Cliente.*']);
         return view('cliente.index', compact('cliente'));
     }
 

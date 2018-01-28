@@ -7,7 +7,14 @@
 @section('contentheader_title')
     Editar Cliente
 @endsection
-
+<style>
+    #map {
+        height: 65%;
+        width: 100%;
+        margin: auto;
+        text-align: center;
+    }
+</style>
 
 @section('main-content')
 
@@ -121,6 +128,8 @@
                                                value="{{$cliente->lote}}" placeholder="Lote">
                                     </div>
                                 </div>
+                                <div class="form-group" id="map"></div>
+                                <input type="hidden" value="" id="inputHiddenCoordenadas" name="ihcoordenadas">
                             </fieldset>
                             <fieldset>
                                 <legend>Usuário</legend>
@@ -157,4 +166,111 @@
             </div>
         </div>
     </div>
+@endsection
+@section('scriptlocal')
+    <script>
+        var typingTimer;                //timer identifier
+        var doneTypingInterval = 500;  //time in ms, 5 second for example
+        var $logradouro = $('#inputLogradouro');
+        var $bairro = $('#inputBairro');
+        var $numero = $('#inputNumero');
+
+        $logradouro.on('keyup', function () {
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(initMap, doneTypingInterval);
+        });
+
+        //on keydown, clear the countdown
+        $logradouro.on('keydown', function () {
+            clearTimeout(typingTimer);
+        });
+
+        $bairro.on('keyup', function () {
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(initMap, doneTypingInterval);
+        });
+
+        //on keydown, clear the countdown
+        $bairro.on('keydown', function () {
+            clearTimeout(typingTimer);
+        });
+
+        //on keyup, start the countdown
+        $numero.on('keyup', function () {
+//            if($logradouro.val() !== null
+//                && $bairro.val() !== null
+//                && $numero.val() !== null){
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(initMap, doneTypingInterval);
+//            }
+        });
+
+        //on keydown, clear the countdown
+        $numero.on('keydown', function () {
+            clearTimeout(typingTimer);
+        });
+
+
+        function initMap() {
+
+            var restaurante = {lat: -17.887522, lng: -51.714028};
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 18,
+                center: restaurante
+            });
+            var marker = new google.maps.Marker({
+                position: restaurante,
+                map: map,
+                draggable: true
+            });
+            marker.addListener('dragend', function() {
+                map.setZoom(18);
+                map.setCenter(marker.getPosition());
+//                alert(marker.position);
+                $('#inputHiddenCoordenadas').attr('value', marker.position);
+
+            });
+            var addressInput = $logradouro.val()+','+$bairro.val()+','+$numero.val();
+
+//            var map = document.getElementById('map');
+
+            var geocoder = new google.maps.Geocoder();
+
+            geocoder.geocode({address: addressInput}, function (results, status) {
+
+                if (status == google.maps.GeocoderStatus.OK) {
+
+                    var myResult = results[0].geometry.location; // referência ao valor LatLng
+
+                    createMarker(myResult, marker, map); // adicionar chamada à função que adiciona o marcador
+
+                    map.setCenter(myResult);
+
+                    map.setZoom(17);
+
+                }
+            });
+
+        }
+        function createMarker(latlng, marker, map) {
+
+            // Se o utilizador efetuar outra pesquisa é necessário limpar a variável marker
+            if(marker != undefined && marker != ''){
+                marker.setMap(null);
+                marker = '';
+            }
+
+            marker = new google.maps.Marker({
+                map: map,
+                position: latlng,
+                draggable: true
+            });
+            $('#inputHiddenCoordenadas').attr('value', marker.position);
+
+            //return marker;
+
+        }
+        google.maps.event.addDomListener(window, "load", initMap);
+
+    </script>
 @endsection

@@ -1,0 +1,1 @@
+<p>Olá {{$nome}}!<br>Sua senha de acesso é: {{$senha}}</p>

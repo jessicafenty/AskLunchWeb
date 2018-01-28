@@ -65,6 +65,7 @@
                             <thead>
                                 <tr align="center">
                                     <td class="col-md-4"><strong>Nome</strong></td>
+                                    <td class="col-md-4"><strong>Tipo</strong></td>
                                     <td class="col-md-4" align="center"><strong>Ações</strong></td>
                                 </tr>
                             </thead>
@@ -72,6 +73,7 @@
                                 @foreach($funcionario as $c)
                                     <tr>
                                         <td>{{$c->nome}}</td>
+                                        <td>{{$c->tipo}}</td>
                                         <td align="right">
                                             <a href="{{route('funcionario.show',$c->codigo)}}" class="btn btn-small btn-info">
                                                 <i class="fa fa-search-plus"></i>
@@ -99,7 +101,7 @@
                                                         </div>
 
                                                         <div class="modal-footer">
-                                                            {!! Form::open(array('route' => array('funcionario.destroy', $c->cod_cliente), 'method' => 'delete')) !!}
+                                                            {!! Form::open(array('route' => array('funcionario.destroy', $c->codigo), 'method' => 'delete')) !!}
                                                             {!! csrf_field() !!}
                                                             <button class="btn btn-danger" type="submit">Excluir</button>
                                                             <button class="btn btn-default" type="button" data-dismiss="modal">Cancelar</button>

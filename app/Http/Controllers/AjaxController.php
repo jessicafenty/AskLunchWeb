@@ -154,7 +154,9 @@ Categoria_Marmita.tamanho AS tamanho, Marmita.codigo AS cod_marmita
 FROM Cliente INNER JOIN Pedido ON (Cliente.codigo = Pedido.cod_cliente)
 INNER JOIN Marmita ON (Pedido.codigo = Marmita.cod_pedido)
 INNER JOIN Categoria_Marmita ON (Marmita.cod_categoria = Categoria_Marmita.codigo)
-WHERE DATE (Pedido.data_pedido) = '".$data."' AND Cliente.codigo = ".$codCliente));
+WHERE Pedido.codigo = ".$id." AND Cliente.codigo = ".$codCliente));
+//WHERE DATE (Pedido.data_pedido) = '".$data."' AND Cliente.codigo = ".$codCliente));
+
         return view('pedido.showMarmitas', compact('marmitas'));
     }
     public function showItens($id)

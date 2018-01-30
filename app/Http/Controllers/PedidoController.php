@@ -109,9 +109,10 @@ class PedidoController extends Controller
 
 
                     foreach ($fields as $name => $value) {
-                        $p = (string)$i;
+                        $p = (string)($i+1);
 
                         if (ends_with($name, 'G')) {
+                            //dd($p[0]);
                             if (starts_with($name, $p[0])) {
                                 $itemMarmitaGrande = new ItemMarmita();
                                 $itemMarmitaGrande->cod_marmita = $marmitaGrande->codigo;
@@ -134,7 +135,7 @@ class PedidoController extends Controller
                     $marmitaPequena->save();
 
                     foreach ($fields as $name => $value) {
-                        $p = (string)$j;
+                        $p = (string)($j+1);
 
                         if (ends_with($name, 'P')) {
                             if (starts_with($name, $p[0])) {
@@ -190,7 +191,7 @@ class PedidoController extends Controller
     {
         $pedido = Pedido::findOrFail($id);
         $cliente = Funcionario::findOrFail($pedido->cod_cliente);
-        $usuario = Usuario::findOrFail($pedido->cod_cliente);
+        $usuario = Usuario::where('cod_cliente',$pedido->cod_cliente)->first();
 
 
         date_default_timezone_set('America/Sao_Paulo');
@@ -202,7 +203,8 @@ class PedidoController extends Controller
         FROM Cliente INNER JOIN Pedido ON (Cliente.codigo = Pedido.cod_cliente)
         INNER JOIN Marmita ON (Pedido.codigo = Marmita.cod_pedido)
         INNER JOIN Categoria_Marmita ON (Marmita.cod_categoria = Categoria_Marmita.codigo)
-        WHERE DATE (Pedido.data_pedido) = '".$data."' AND Cliente.codigo = ".$codCliente));
+        WHERE Pedido.codigo = ".$id." AND Cliente.codigo = ".$codCliente));
+//        WHERE DATE (Pedido.data_pedido) = '".$data."' AND Cliente.codigo = ".$codCliente));
 
 
 

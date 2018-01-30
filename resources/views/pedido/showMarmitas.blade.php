@@ -82,7 +82,7 @@
                 $('#itens').show();
                 //alert($(this).attr('id'));
                 $.ajax({
-                    url: '../../itens/' + $(this).attr('id'),
+                    url: '../../../itens/' + $(this).attr('id'),
                     type: 'GET',
                     dataType: 'json',
                     success: function (json) {

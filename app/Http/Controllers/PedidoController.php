@@ -58,7 +58,9 @@ class PedidoController extends Controller
         $itens = Item::where('status_item','=','Ativo')->
             where('inativo','=','0')->get();
         $bebidas = Bebida::where('inativo','=','0')->get();
-        return view('pedido.create', compact('pedido', 'formapagamento', 'cliente','itens','bebidas'));
+        $categoriaGrande = Categoria::where('tamanho','Grande')->first();
+        $categoriaPequena = Categoria::where('tamanho','Pequena')->first();
+        return view('pedido.create', compact('pedido', 'formapagamento', 'cliente','itens','bebidas', 'categoriaGrande', 'categoriaPequena'));
     }
 
     /**

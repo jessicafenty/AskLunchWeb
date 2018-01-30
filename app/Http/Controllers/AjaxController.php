@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Bebida;
 use App\Categoria;
 use App\Item;
 use App\Pedido;
@@ -222,6 +223,11 @@ WHERE Item_Marmita.cod_marmita = ".$id." ORDER BY Item.descricao"));
         return View::make('pedido.extraviado')
             ->with('activePedido','active treeview')
             ->with('pedido',$pedido);
+    }
+
+    public function trazerValorBebida($id){
+        $valor = Bebida::select('valor')->where('codigo',$id)->first();
+        return $valor;
     }
 
 

@@ -74,6 +74,8 @@ Route::group(['middleware' => ['web']], function (){
         Route::get('pedidosRecebidos/marmitas/{id}',array('as' => 'pedido.marmitas', 'uses' => 'AjaxController@showMarmitas'));
         Route::get('itens/{id}', 'AjaxController@showItens');
 
+        Route::get('valorBebida/{id}', 'AjaxController@trazerValorBebida');
+
         Route::post('valorMarmitas', array('as' => 'valor.marmitas', 'uses' => 'AjaxController@alterarValor'));
 
         Route::get('cancelarPedido/{id}',array('as' => 'pedido.cancelar', 'uses' => 'AjaxController@alterarStatusCancelar'));

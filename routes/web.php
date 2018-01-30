@@ -76,6 +76,9 @@ Route::group(['middleware' => ['web']], function (){
 
         Route::get('valorBebida/{id}', 'AjaxController@trazerValorBebida');
 
+        Route::get('configuracao', array('as' => 'configuracao', 'uses' => 'ConfiguracaoController@createform'));
+        Route::post('configuracao', array('as' => 'config.save', 'uses' => 'ConfiguracaoController@save'));
+
         Route::post('valorMarmitas', array('as' => 'valor.marmitas', 'uses' => 'AjaxController@alterarValor'));
 
         Route::get('cancelarPedido/{id}',array('as' => 'pedido.cancelar', 'uses' => 'AjaxController@alterarStatusCancelar'));

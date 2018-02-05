@@ -208,7 +208,7 @@
                             <div class="form-group">
                                 <label for="inputQuadra" id="labelQuadra" class="col-sm-2 control-label">Quadra</label>
                                 <div class="col-sm-10">
-                                    <input type="number" class="form-control input-lg" id="inputQuadra" name="quadra"
+                                    <input type="text" class="form-control input-lg" id="inputQuadra" name="quadra"
                                            value="{{old('quadra')}}" placeholder="Quadra">
                                 </div>
                             </div>
@@ -216,7 +216,7 @@
                             <div class="form-group">
                                 <label for="inputLote" id="labelLote" class="col-sm-2 control-label">Lote</label>
                                 <div class="col-sm-10">
-                                    <input type="number" class="form-control input-lg" id="inputLote" name="lote"
+                                    <input type="text" class="form-control input-lg" id="inputLote" name="lote"
                                            value="{{old('lote')}}" placeholder="Lote">
                                 </div>
                             </div>

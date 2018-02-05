@@ -179,6 +179,7 @@
 @endsection
 @section('scriptlocal')
     <script>
+        $('input[name="telefone"]').mask('(00)00000-0000');
         var typingTimer;                //timer identifier
         var doneTypingInterval = 500;  //time in ms, 5 second for example
         var $logradouro = $('#inputLogradouro');

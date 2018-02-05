@@ -325,9 +325,44 @@ class PedidoController extends Controller
             $pedido->cod_cliente = $request->input('cliente');
             $pedido->logradouro = $request->logradouro;
             $pedido->bairro = $request->bairro;
-            $pedido->numero = $request->numero;
-            $pedido->quadra = $request->quadra;
-            $pedido->lote = $request->lote;
+            if($request->numero === null){
+                $pedido->numero = 0;
+            }else{
+                $pedido->numero = (int)$request->numero;
+            }
+            if($request->quadra === null){
+                $pedido->quadra = 0;
+            }else{
+                $pedido->quadra = (int)$request->quadra;
+            }
+            if($request->lote === null){
+                $pedido->lote = 0;
+            }else{
+                $pedido->lote = (int)$request->lote;
+            }
+            $var = true;
+            $text = '';
+            if((int)$request->numero === 0 &&
+                (int)$request->quadra === 0 &&
+                (int)$request->lote === 0){
+                $var = false;
+                $text = "Favor informar número e/ou quadra e lote!";
+            }
+            if($pedido->numero === 0 &&
+                $pedido->quadra === 0 &&
+                $pedido->lote === 0){
+                $var = false;
+                $text = "Favor informar número e/ou quadra e lote!";
+            }
+            if($pedido->quadra !== 0 && $pedido->lote === 0){
+                $var = false;
+                $text = "Favor informar o lote!";
+            }
+            if($pedido->quadra === 0 && $pedido->lote !== 0){
+                $var = false;
+                $text = "Favor informar a quadra!";
+            }
+            if($var) {
             $pedido->coordenadas = $request->input('coordenadas');
             $pedido->status = "Recebido";
             $pedido->entregador = "Padrão";
@@ -481,6 +516,9 @@ class PedidoController extends Controller
 
 
             Session::flash('mensagem', 'Pedido atualizado com sucesso!');
+            }else{
+                Session::flash('mensagemErro', $text);
+            }
         }else{
             Session::flash('mensagemErro', 'Favor escolher uma OPÇÃO!');
         }

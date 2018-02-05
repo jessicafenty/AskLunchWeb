@@ -133,6 +133,22 @@
                                     </div>
                                 </div>
 
+                                <div class="form-group form-inline col-md-12">
+                                    <div class="form-group col-md-8">
+                                        <label for="inputValorTotal" class="col-sm-3 control-label">Valor Total</label>
+                                        <div class="col-md-4">
+                                            <input type="number" class="form-control" id="inputValorTotal" name="valorTotal"
+                                                   value="{{old('valorTotal')}}" placeholder="Valor Total" disabled="disabled">
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <div class="col-md-4">
+                                                <a id="buttonValorTotal" class="btn btn-default">Calcular</a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
                                 <div class="form-group">
                                     <label for="inputTroco" class="col-sm-2 control-label">Troco</label>
                                     <div class="col-sm-10">
@@ -302,6 +318,73 @@
             $inputP.on('keydown', function () {
                 clearTimeout(typingTimer);
             });
+            var pag = $('#pagamento').find(":selected").text().toLowerCase();
+            if(pag !== 'dinheiro'){
+                $('#inputTroco').val('');
+                $('#inputTroco').attr('disabled', 'disabled');
+            }
+            $('#pagamento').on('change',function () {
+                var pag = $('#pagamento').find(":selected").text().toLowerCase();
+                if(pag !== 'dinheiro'){
+                    $('#inputTroco').val('');
+                    $('#inputTroco').attr('disabled', 'disabled');
+                }else{
+                    $('#inputTroco').removeAttr('disabled');
+                }
+            });
+
+            $('#buttonValorTotal').click(function () {
+                valorTotal();
+            });
+            function valorTotal(){
+                var catGrande = '<?php echo $categoriaGrande->valor?>';
+                var catPequena = '<?php echo $categoriaPequena->valor?>';
+                var qtdPequena = $('#inputQtdPequena').val();
+                var qtdGrande = $('#inputQtdGrande').val();
+                var total = 0;
+                if(qtdPequena === "" && qtdGrande === ""){
+                    total = 0;
+                }else {
+                    if (isNaN(parseInt(qtdPequena))) {
+                        total = parseInt(qtdGrande) * catGrande;
+                    } else {
+                        if (isNaN(parseInt(qtdGrande))) {
+                            total = parseInt(qtdPequena) * catPequena;
+                        } else {
+                            total = (parseInt(qtdGrande) * catGrande) + (parseInt(qtdPequena) * catPequena);
+                        }
+                    }
+                }
+                if($('#checkBebidas').is(':checked')) {
+//                    var qtd = $('#divBebidas input[type = number]').length;
+//                    for(y=0;y<qtd;y++){
+//                       alert($('#divBebidas input[type = number]').attr('name'));
+//                    }
+                    var result = 0;
+
+                    $('#divBebidas').find('input[name][value]').each(function(){
+                        if($(this).val() != ''){
+                            var res = $(this).attr('name').split("");
+                            //alert(res[0]);
+                            var qtd = $(this).val();
+                            $.ajax({
+                                url: '../../valorBebida/' + res[0],
+                                type: 'GET',
+                                dataType: 'json',
+                                success: function (obj) {
+                                    result += parseFloat(obj.valor)*parseFloat(qtd);
+                                    //alert(result);
+                                },
+                                async: false
+                            });
+
+                        }
+                    });
+                    //alert(result);
+                    total = total + result;
+                }
+                $('#inputValorTotal').attr('value', total);
+            }
 
             if($inputG!==0){
                 preencherItensG();

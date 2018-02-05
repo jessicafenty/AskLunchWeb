@@ -59,10 +59,10 @@ FROM Pedido INNER JOIN Marmita ON (Pedido.codigo = Marmita.cod_pedido) WHERE Ped
 
         }
         if(strcmp($request->input('relatorio'), "totalMarmitasDia")==0){
-            $mes = date("Y-m-d");
+            $dataAtual = date("Y-m-d");
             $mesRelatorio = date("d-m-Y");
             $marmitas = DB::select(DB::raw("SELECT COUNT(Marmita.codigo) as quantidade, SUM(Marmita.valor_vendido) as total 
-FROM Pedido INNER JOIN Marmita ON (Pedido.codigo = Marmita.cod_pedido) WHERE Pedido.status = 'Finalizado' AND MONTH(Pedido.data_pedido) = ".$mes));
+FROM Pedido INNER JOIN Marmita ON (Pedido.codigo = Marmita.cod_pedido) WHERE Pedido.status = 'Finalizado' AND DATE(Pedido.data_pedido) = '".$dataAtual."'"));
 
             $pdf = PDF::loadView('relatorio.marmitasDia', compact('marmitas'), compact('mesRelatorio'));
             return $pdf->stream();

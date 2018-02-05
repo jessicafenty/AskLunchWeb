@@ -292,6 +292,20 @@
             $inputP.on('keydown', function () {
                 clearTimeout(typingTimer);
             });
+            var pag = $('#pagamento').find(":selected").text().toLowerCase();
+            if(pag !== 'dinheiro'){
+                $('#inputTroco').val('');
+                $('#inputTroco').attr('disabled', 'disabled');
+            }
+            $('#pagamento').on('change',function () {
+                var pag = $('#pagamento').find(":selected").text().toLowerCase();
+                if(pag !== 'dinheiro'){
+                    $('#inputTroco').val('');
+                    $('#inputTroco').attr('disabled', 'disabled');
+                }else{
+                    $('#inputTroco').removeAttr('disabled');
+                }
+            });
             $('#buttonValorTotal').click(function () {
                valorTotal();
             });

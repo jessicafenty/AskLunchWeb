@@ -94,7 +94,7 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
         <div id="c">
             <div class="container">
                 <p>
-                    <strong>ASKLUNCH <br> Copyright &copy; 2017 </strong>
+                    <strong>ASKLUNCH <br> Copyright &copy; <?php echo date('Y')?> </strong>
                 </p>
             </div>
         </div>

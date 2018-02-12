@@ -65,34 +65,72 @@ class FuncionarioController extends Controller
         $funcionario->data_nascimento = $newDateString;
         $funcionario->logradouro = $request->input('logradouro');
         $funcionario->bairro = $request->input('bairro');
-        $funcionario->numero = $request->input('numero');
-        $funcionario->quadra = $request->input('quadra');
-        $funcionario->lote = $request->input('lote');
-        $caracteres = array('(', ')', ' ');
-        $varCoordenadas = str_replace($caracteres,'',$request->input('ihcoordenadas'));
-        $funcionario->coordenadas = $varCoordenadas;
+        if($request->numero === null){
+            $funcionario->numero = 0;
+        }else{
+            $funcionario->numero = (int)$request->numero;
+        }
+        if($request->quadra === null){
+            $funcionario->quadra = 0;
+        }else{
+            $funcionario->quadra = (int)$request->quadra;
+        }
+        if($request->lote === null){
+            $funcionario->lote = 0;
+        }else{
+            $funcionario->lote = (int)$request->lote;
+        }
+        $var = true;
+        $text = '';
+        if((int)$request->numero === 0 &&
+            (int)$request->quadra === 0 &&
+            (int)$request->lote === 0){
+            $var = false;
+            $text = "Favor informar número e/ou quadra e lote!";
+        }
+        if($funcionario->numero === 0 &&
+            $funcionario->quadra === 0 &&
+            $funcionario->lote === 0){
+            $var = false;
+            $text = "Favor informar número e/ou quadra e lote!";
+        }
+        if($funcionario->quadra !== 0 && $funcionario->lote === 0){
+            $var = false;
+            $text = "Favor informar o lote!";
+        }
+        if($funcionario->quadra === 0 && $funcionario->lote !== 0){
+            $var = false;
+            $text = "Favor informar a quadra!";
+        }
+        if($var) {
+            $caracteres = array('(', ')', ' ');
+            $varCoordenadas = str_replace($caracteres, '', $request->input('ihcoordenadas'));
+            $funcionario->coordenadas = $varCoordenadas;
 
-        $funcionario->save();
+            $funcionario->save();
 
-        if($request->input('email') != null) {
-            $count = Usuario::where('email', $request->input('email'))->count();
-            if ($count < 1) {
+            if ($request->input('email') != null) {
+                $count = Usuario::where('email', $request->input('email'))->count();
+                if ($count < 1) {
 
-                $usuario = new Usuario();
-                $usuario->email = $request->input('email');
+                    $usuario = new Usuario();
+                    $usuario->email = $request->input('email');
 //                $usuario->senha = bcrypt($request->input('senha'));
-                $encrypted = Crypt::encryptString($request->input('senha'));
-                $usuario->senha = $encrypted;
-                $usuario->tipo = $request->input('tipo');
+                    $encrypted = Crypt::encryptString($request->input('senha'));
+                    $usuario->senha = $encrypted;
+                    $usuario->tipo = $request->input('tipo');
 
-                $usuario->funcionario()->associate($funcionario);
+                    $usuario->funcionario()->associate($funcionario);
 
-                $usuario->save();
+                    $usuario->save();
 
-                Session::flash('mensagem', 'Funcionário cadastrado com sucesso!');
-            } else {
-                Session::flash('mensagemErro', 'Email já cadastrado!');
+                    Session::flash('mensagem', 'Funcionário cadastrado com sucesso!');
+                } else {
+                    Session::flash('mensagemErro', 'Email já cadastrado!');
+                }
             }
+        }else{
+            Session::flash('mensagemErro', $text);
         }
 
         return redirect('/funcionario/create');
@@ -140,45 +178,73 @@ class FuncionarioController extends Controller
         $funcionario->data_nascimento = $newDateString;
         $funcionario->logradouro = $request->input('logradouro');
         $funcionario->bairro = $request->input('bairro');
-        $funcionario->numero = $request->input('numero');
-        $funcionario->quadra = $request->input('quadra');
-        $funcionario->lote = $request->input('lote');
-        $funcionario->coordenadas = "0,0";
+        if($request->numero === null){
+            $funcionario->numero = 0;
+        }else{
+            $funcionario->numero = (int)$request->numero;
+        }
+        if($request->quadra === null){
+            $funcionario->quadra = 0;
+        }else{
+            $funcionario->quadra = (int)$request->quadra;
+        }
+        if($request->lote === null){
+            $funcionario->lote = 0;
+        }else{
+            $funcionario->lote = (int)$request->lote;
+        }
+        $var = true;
+        $text = '';
+        if((int)$request->numero === 0 &&
+            (int)$request->quadra === 0 &&
+            (int)$request->lote === 0){
+            $var = false;
+            $text = "Favor informar número e/ou quadra e lote!";
+        }
+        if($funcionario->numero === 0 &&
+            $funcionario->quadra === 0 &&
+            $funcionario->lote === 0){
+            $var = false;
+            $text = "Favor informar número e/ou quadra e lote!";
+        }
+        if($funcionario->quadra !== 0 && $funcionario->lote === 0){
+            $var = false;
+            $text = "Favor informar o lote!";
+        }
+        if($funcionario->quadra === 0 && $funcionario->lote !== 0){
+            $var = false;
+            $text = "Favor informar a quadra!";
+        }
+        if($var) {
+            $caracteres = array('(', ')', ' ');
+            $varCoordenadas = str_replace($caracteres, '', $request->input('ihcoordenadas'));
+            $funcionario->coordenadas = $varCoordenadas;
 
-        $funcionario->save();
+            $funcionario->save();
 
+            if ($request->input('email') != null) {
+                $count = Usuario::where('email', $request->input('email'))
+                    ->where('cod_cliente', '<>', $id)->count();
+                if ($count < 1) {
 
-       // dd($usuario->email);
-//        $usuario->email = $request->input('email');
-//        $usuario->senha = bcrypt($request->input('senha'));
-//        $usuario->tipo = $request->input('tipo');
-//
-//        $usuario->funcionario()->associate($funcionario);
-//
-//        $usuario->update();
-//
-//        Session::flash('mensagem', 'Funcionário atualizado com sucesso!');
-
-        if($request->input('email') != null) {
-            $count = Usuario::where('email', $request->input('email'))
-                ->where('cod_cliente', '<>', $id)->count();
-            if ($count < 1) {
-
-                $usuario = Usuario::where('cod_cliente',$id)->first();
-                $usuario->email = $request->input('email');
+                    $usuario = Usuario::where('cod_cliente', $id)->first();
+                    $usuario->email = $request->input('email');
 //                $usuario->senha = bcrypt($request->input('senha'));
-                $encrypted = Crypt::encryptString($request->input('senha'));
-                $usuario->senha = $encrypted;
-                $usuario->tipo = $request->input('tipo');
+                    $encrypted = Crypt::encryptString($request->input('senha'));
+                    $usuario->senha = $encrypted;
+                    $usuario->tipo = $request->input('tipo');
 
-                $usuario->funcionario()->associate($funcionario);
+                    $usuario->funcionario()->associate($funcionario);
 
-                $usuario->update();
+                    $usuario->update();
 
-                Session::flash('mensagem', 'Funcionário atualizado com sucesso!');
-            } else {
-                Session::flash('mensagemErro', 'Email já cadastrado!');
+                    Session::flash('mensagem', 'Funcionário atualizado com sucesso!');
+                } else {
+                    Session::flash('mensagemErro', 'Email já cadastrado!');
+                }
             }
+        }else{
+            Session::flash('mensagemErro', $text);
         }
 
         return redirect('/funcionario/'.$id.'/edit');

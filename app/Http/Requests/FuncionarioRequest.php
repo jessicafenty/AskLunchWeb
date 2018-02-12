@@ -30,7 +30,7 @@ class FuncionarioRequest extends FormRequest
             'logradouro' => 'required|max:150',
             'bairro' => 'required|max:100',
             'email' => 'required|max:150|email',
-            'senha' => 'required|max:100',
+            'senha' => 'required|min:6|max:8',
         ];
     }
 
@@ -44,6 +44,8 @@ class FuncionarioRequest extends FormRequest
             'bairro.required' => 'Favor informar o BAIRRO',
             'email.required' => 'Favor informar o EMAIL',
             'senha.required' => 'Favor informar a SENHA',
+            'senha.min' => 'Favor informar uma SENHA de no mínimo 6 caracteres',
+            'senha.max' => 'Favor informar uma SENHA de no máximo 8 caracteres',
             'email.unique' => 'Email já existente, favor informar outro EMAIL',
         ];
     }

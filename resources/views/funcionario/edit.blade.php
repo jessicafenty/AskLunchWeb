@@ -145,7 +145,7 @@
                                     <label for="inputSenha" class="col-sm-2 control-label">Senha</label>
                                     <div class="col-sm-10">
                                         <input type="password" class="form-control input-lg" id="inputSenha" name="senha"
-                                               value="{{Crypt::decryptString($funcionario->usuario->senha)}}" placeholder="Senha">
+                                               value="{{($funcionario->usuario->tipo === 'Entregador') ? $funcionario->usuario->senha : Crypt::decryptString($funcionario->usuario->senha)}}" placeholder="Senha">
                                     </div>
                                 </div>
 

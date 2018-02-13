@@ -63,12 +63,12 @@
                                 <div class="form-group text-center">
                                     <div class="col-sm-6">
                                         <label class="checkbox-inline">
-                                            <input type="checkbox" id="checkG">Grande
+                                            <input type="checkbox" id="checkG" name="cckGrande">Grande
                                         </label>
                                     </div>
                                     <div class="col-sm-6">
                                         <label class="checkbox-inline">
-                                            <input type="checkbox" id="checkP">Pequena
+                                            <input type="checkbox" id="checkP" name="cckPequena">Pequena
                                         </label>
                                     </div>
 

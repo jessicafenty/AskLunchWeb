@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\FormaPagamento;
+use App\Http\Requests\FormaPagamentoRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
@@ -37,10 +38,11 @@ class FormaPagamentoController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(FormaPagamentoRequest $request)
     {
         if($request->input('formapagamento') != null) {
-            $count = FormaPagamento::where('descricao', $request->input('formapagamento'))->count();
+            $count = FormaPagamento::where(DB::raw('LOWER(descricao)'), strtolower($request->input('formapagamento')))->
+                where('inativo', '0')->count();
             if ($count < 1) {
                 $formapagamento = new FormaPagamento();
                 $formapagamento->descricao = $request->formapagamento;
@@ -50,7 +52,7 @@ class FormaPagamentoController extends Controller
                     $formapagamento->status = "Inativo";
                 }
                 $formapagamento->save();
-                Session::flash('mensagem', 'Forma de Pagamento cadastrada com sucesso!');
+                Session::flash('mensagem', 'Forma de Pagamento atualizada com sucesso!');
             } else {
                 Session::flash('mensagemErro', 'Não é possível cadastrar formas de pagamentos repetidas!');
             }
@@ -89,12 +91,12 @@ class FormaPagamentoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(FormaPagamentoRequest $request, $id)
     {
         if($request->input('formapagamento') != null) {
-            $count = FormaPagamento::where('descricao', $request->input('formapagamento'))
-                ->where('codigo', '<>', $id)
-                ->count();
+            $count = FormaPagamento::where(DB::raw('LOWER(descricao)'), strtolower($request->input('formapagamento')))->
+            where('inativo', '0')->
+            where('codigo', '<>', $id)->count();
             if ($count < 1) {
                 $formapagamento = FormaPagamento::findOrFail($id);
                 $formapagamento->descricao = $request->formapagamento;
@@ -104,7 +106,7 @@ class FormaPagamentoController extends Controller
                     $formapagamento->status = "Inativo";
                 }
                 $formapagamento->update();
-                Session::flash('mensagem', 'Forma de Pagamento cadastrada com sucesso!');
+                Session::flash('mensagem', 'Forma de Pagamento atualizada com sucesso!');
             } else {
                 Session::flash('mensagemErro', 'Não é possível cadastrar formas de pagamentos repetidas!');
             }

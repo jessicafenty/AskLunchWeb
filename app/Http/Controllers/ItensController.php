@@ -9,7 +9,8 @@ use Illuminate\Http\Request;
 class ItensController extends Controller
 {
     public function itensAtivos(){
-        $item = Item::all()->where('status_item', 'Ativo');
+        $item = Item::where('status_item', 'Ativo')
+        ->where('inativo','0')->get();
         return view('item.itens', compact('item'));
     }
     public function itensMarmitasGrandes($codMarmita){

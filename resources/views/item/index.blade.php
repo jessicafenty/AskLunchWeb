@@ -93,11 +93,11 @@
 
                                                         <div class="modal-header" style="text-align: left">
                                                             <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                            <h4 class="modal-title"> Excluir Funcionário </h4>
+                                                            <h4 class="modal-title"> Excluir Item </h4>
                                                         </div>
 
                                                         <div class="modal-body text-center">
-                                                            <p>Deseja realmente excluir o funcionário {{$c->descricao}}?</p>
+                                                            <p>Deseja realmente excluir o item {{$c->descricao}}?</p>
                                                         </div>
 
                                                         <div class="modal-footer">
@@ -129,9 +129,9 @@
 @section('scriptlocal')
     <script type="text/javascript">
       $(document).ready(function () {
-          $('tbody :checkbox').click(function () {
+          $('tbody #tdcheck').click(function () {
               $.ajax({
-                  url:'../alterarStatus/'+$("td input").attr("id"),
+                  url:'../alterarStatus/'+$(this).children('input:first').attr("id"),
                   type:'GET',
                   dataType:'json'
               });

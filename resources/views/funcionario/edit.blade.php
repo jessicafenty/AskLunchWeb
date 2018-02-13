@@ -116,7 +116,7 @@
                                 <div class="form-group">
                                     <label for="inputQuadra" class="col-sm-2 control-label">Quadra</label>
                                     <div class="col-sm-10">
-                                        <input type="number" class="form-control input-lg" id="inputQuadra" name="quadra"
+                                        <input type="text" class="form-control input-lg" id="inputQuadra" name="quadra"
                                                value="{{$funcionario->quadra}}" placeholder="Quadra">
                                     </div>
                                 </div>
@@ -124,7 +124,7 @@
                                 <div class="form-group">
                                     <label for="inputLote" class="col-sm-2 control-label">Lote</label>
                                     <div class="col-sm-10">
-                                        <input type="number" class="form-control input-lg" id="inputLote" name="lote"
+                                        <input type="text" class="form-control input-lg" id="inputLote" name="lote"
                                                value="{{$funcionario->lote}}" placeholder="Lote">
                                     </div>
                                 </div>
@@ -185,6 +185,25 @@
         var $logradouro = $('#inputLogradouro');
         var $bairro = $('#inputBairro');
         var $numero = $('#inputNumero');
+
+        $("#inputNome").on("keydown", function(event){
+            // Allow controls such as backspace, tab etc.
+            var arr = [8,9,16,17,20,35,36,37,38,39,40,45,46,32];
+
+            // Allow letters
+            for(var i = 65; i <= 90; i++){
+                arr.push(i);
+            }
+
+            // Prevent default if not in array
+            if(jQuery.inArray(event.which, arr) === -1){
+                event.preventDefault();
+            }
+        });
+
+        $('#inputEmail').on('focusout', function () {
+            $('#inputEmail').val($('#inputEmail').val().toLowerCase());
+        });
 
         $logradouro.on('keyup', function () {
             clearTimeout(typingTimer);

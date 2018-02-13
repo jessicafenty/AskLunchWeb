@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Bebida;
+use App\Http\Requests\BebidaRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
@@ -37,9 +38,11 @@ class BebidaController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(BebidaRequest $request)
     {
-        $count = Bebida::where('descricao',$request->input('descricao'))->count();
+        $count = Bebida::where(DB::raw('LOWER(descricao)'), strtolower($request->input('descricao')))->
+        where('inativo', '0')->count();
+
         if($count < 1) {
             $bebida = new Bebida();
             $bebida->descricao = $request->input('descricao');
@@ -51,8 +54,8 @@ class BebidaController extends Controller
         }else{
             Session::flash('mensagemErro', 'Não é possível cadastrar bebidas repetidas!');
         }
+        return redirect('/bebida/create');
 
-        return redirect('/bebida');
     }
 
     /**
@@ -86,7 +89,7 @@ class BebidaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(BebidaRequest $request, $id)
     {
 
         $bebida = Bebida::findOrFail($id);

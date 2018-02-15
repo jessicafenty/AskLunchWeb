@@ -109,7 +109,7 @@ class AjaxController extends Controller
     public function restaurarPedidoCancelado($id)
     {
         $pedido = Pedido::findOrFail($id);
-        $pedido->status = 'Pronto';
+        $pedido->status = 'Recebido';
         $pedido->entregador = 'Padrão';
         $pedido->update();
         return redirect('pedidosCancelados');

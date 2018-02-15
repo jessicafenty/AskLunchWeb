@@ -1,11 +1,11 @@
 @extends('adminlte::layouts.app')
 
 @section('htmlheader_title')
-    Gerenciamento de Pedidos
+    Gerenciamento de Pedidos - Pedidos Prontos
 @endsection
 
 @section('contentheader_title')
-    Gerenciamento de Pedidos
+    Gerenciamento de Pedidos - Pedidos Prontos
 @endsection
 
 

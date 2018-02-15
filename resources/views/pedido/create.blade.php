@@ -76,14 +76,14 @@
                                 <div class="form-group">
                                     <label for="inputQtdGrande" id="labelGrande" class="col-sm-2 control-label">Grande</label>
                                     <div class="col-sm-6">
-                                        <input type="number" class="form-control input-lg" id="inputQtdGrande" name="qtdGrande"
+                                        <input type="number" step="any" min="0" class="form-control input-lg" id="inputQtdGrande" name="qtdGrande"
                                                value="{{old('qtdGrande')}}" placeholder="Qtd Marmita Grande">
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label for="inputQtdPequena" id="labelPequena" class="col-sm-2 control-label">Pequena</label>
                                     <div class="col-sm-6">
-                                        <input type="number" class="form-control input-lg" id="inputQtdPequena" name="qtdPequena"
+                                        <input type="number" step="any" min="0" class="form-control input-lg" id="inputQtdPequena" name="qtdPequena"
                                                value="{{old('qtdPequena')}}" placeholder="Qtd Marmita Pequena">
                                     </div>
                                 </div>

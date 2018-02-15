@@ -68,12 +68,12 @@
                             <div class="form-group" style="display: inline-block">
                                 <div class="col-sm-6" style="display:inline-block;">
                                     Valor Atual
-                                    <input style="float: left" type="number" class="form-control input-lg" id="valorAtual" name="valorAtual"
+                                    <input style="float: left" type="number" step="any" min="0" class="form-control input-lg" id="valorAtual" name="valorAtual"
                                            value="{{isset($c->valor) ? $c->valor : '0,00'}}">
                                 </div>
                                 <div class="col-sm-6" style="display:inline-block;">
                                     Novo Valor
-                                    <input style="float: right" type="number" class="form-control input-lg" id="novoValor{{$c->tamanho}}" name="novoValor{{$c->tamanho}}"
+                                    <input style="float: right" type="number" step="any" min="0" class="form-control input-lg" id="novoValor{{$c->tamanho}}" name="novoValor{{$c->tamanho}}"
                                            value="{{isset($c->valor) ? $c->valor : '0,00'}}">
                                 </div>
                                 <input type="hidden" name="codigo{{$c->tamanho}}" value="{{$c->codigo}}">

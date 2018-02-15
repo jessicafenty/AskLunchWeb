@@ -108,7 +108,7 @@
                                 <div class="form-group">
                                     <label for="inputNumero" class="col-sm-2 control-label">Número</label>
                                     <div class="col-sm-10">
-                                        <input type="number" class="form-control input-lg" id="inputNumero" name="numero"
+                                        <input type="number" step="any" min="0" class="form-control input-lg" id="inputNumero" name="numero"
                                                value="{{$cliente->numero}}" placeholder="Número">
                                     </div>
                                 </div>

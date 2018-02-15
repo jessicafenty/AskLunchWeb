@@ -67,7 +67,7 @@
                                 <div class="form-group">
                                     <label for="inputValor" class="col-sm-2 control-label">Valor</label>
                                     <div class="col-sm-10">
-                                        <input type="number" class="form-control input-lg" id="inputValor" name="valor"
+                                        <input type="number" step="any" min="0" class="form-control input-lg" id="inputValor" name="valor"
                                                value="{{old('valor')}}" placeholder="Valor">
                                     </div>
                                 </div>

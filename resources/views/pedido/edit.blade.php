@@ -175,7 +175,7 @@
                                     <div class="col-md-10">
                                         <a id="entrega" class="btn btn-default">Entrega</a>
                                         <a id="retirada" class="btn btn-default">Retirada</a>
-                                        <input type="hidden" id="codigo" name="codigo">
+                                        <input type="hidden" id="codigo" value="{{($pedido->entrega === 0) ? 0 : 1}}" name="codigo">
                                     </div>
                                 </div>
                             <div id="divEntrega">
@@ -198,7 +198,7 @@
                             <div class="form-group">
                                 <label for="inputNumero" id="labelNumero" class="col-sm-2 control-label">Número</label>
                                 <div class="col-sm-10">
-                                    <input type="number" class="form-control input-lg" id="inputNumero" name="numero"
+                                    <input type="number" step="any" min="0" class="form-control input-lg" id="inputNumero" name="numero"
                                            value="{{$pedido->numero}}" placeholder="Número">
                                 </div>
                             </div>

@@ -53,7 +53,8 @@ class PedidoController extends Controller
     public function create()
     {
         $pedido = Pedido::where('inativo','=','0')->get();
-        $formapagamento = FormaPagamento::where('inativo','=','0')->get();
+        $formapagamento = FormaPagamento::where('status','Ativo')->
+        where('inativo','=','0')->get();
         $cliente = Funcionario::where('inativo','=','0')->get();
         $itens = Item::where('status_item','=','Ativo')->
             where('inativo','=','0')->get();
@@ -352,8 +353,8 @@ class PedidoController extends Controller
         $pedido = Pedido::findOrFail($id);
         $mensagem = '';
         $flag = true;
-        if ($request->input('codigo') != null) {
-            if ($request->input('codigo') == 0) {
+        //if ($request->input('codigo') != null) {
+            if ((int)$request->input('codigo') == 0) {
                 $pedido->entrega = 0;
                 $pedido->horario = $request->input('horas') . ":" . $request->input('minutos') . ":00";
                 $arquivo = "/var/www/html/asklunch/android/config.txt";
@@ -372,18 +373,38 @@ class PedidoController extends Controller
 
                         }
                         fclose($fp);
-                        if ((strtotime($pedido->horario) >= strtotime($array[0])) && (strtotime($pedido->horario) <= strtotime($array[1]))) {
-                            $flag = true;
-                        } else {
-                            $mensagem = 'O Restaurante encontra-se fechado no horário informado!';
-                            $flag = false;
-                        }
+                        $horaAtual = date("H:i:s");
+
+//                        if ((strtotime($pedido->horario) <= strtotime($array[0])) && (strtotime($pedido->horario) <= strtotime($array[1]))) {
+//                            $flag = true;
+//                        } else {
+//                            $mensagem = 'O Restaurante encontra-se fechado no horário informado!';
+//                            $flag = false;
+//                        }
+//                        if ((strtotime($pedido->horario) >= strtotime($array[0])) && (strtotime($pedido->horario) <= strtotime($array[1]))) {
+//                            //$flag=true;
+//                            if ((strtotime($horaAtual) <= strtotime($array[0])) && (strtotime($horaAtual) >= strtotime($array[1]))) {
+//
+//                                $flag=true;
+//                            }else{
+//                                $mensagem = 'O Restaurante encontra-se fechado no horário informado 1!';
+//                                $flag = false;
+//                            }
+//
+//
+//                        } else {
+//                            $mensagem = 'O Restaurante encontra-se fechado no horário informado 2!';
+//                            $flag = false;
+//                        }
                     }
-                } else {
-                    $pedido->entrega = 1;
-                    $pedido->horario = "00:00:00";
                 }
+            }else{
+
+                $pedido->entrega = 1;
+                $pedido->horario = "00:00:00";
+            }
                 if ($flag) {
+
                     date_default_timezone_set('America/Sao_Paulo');
                     $data = date("Y-m-d H:i:s");
                     $pedido->data_pedido = $data;
@@ -607,10 +628,10 @@ class PedidoController extends Controller
                 } else {
                     Session::flash('mensagemErro', $mensagem);
                 }
-            } else {
-                Session::flash('mensagemErro', 'Favor escolher uma OPÇÃO!');
-            }
-        }
+//            } else {
+//                Session::flash('mensagemErro', 'Favor escolher uma OPÇÃO!');
+//            }
+        //}
         return redirect('/pedido/' . $id . '/edit');
     }
 

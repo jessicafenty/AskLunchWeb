@@ -24,14 +24,14 @@ class FormaPagamentoRequest extends FormRequest
     public function rules()
     {
         return [
-            'descricao' => 'required',
+            'formapagamento' => 'required',
         ];
     }
 
     public function messages()
     {
         return [
-            'descricao.required' => 'Favor informar um valor para o campo DESCRIÇÃO',
+            'formapagamento.required' => 'Favor informar um valor para o campo DESCRIÇÃO',
         ];
     }
 }

@@ -6,6 +6,7 @@ use App\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Mail;
@@ -27,16 +28,20 @@ class AuthController extends Controller
     public function attempt(Request $request){
         $email = $request->email;
         $senha = $request->senha;
-        $usuario = Usuario::where('email', $email)
-            ->first();
+//        $usuario = Usuario::where('email', $email)
+//            ->first();
+        $usuario = DB::select(DB::raw("SELECT * FROM Usuario WHERE email = '".$email."'
+AND (tipo = 'Administrador' OR tipo = 'Padrão')"));
 
-        if (! is_null($usuario)) {
+
+
+        if (!empty($usuario)) {
 //            if (Hash::check($senha, $usuario->senha)) {
-            $decrypted = Crypt::decryptString($usuario->senha);
+            $decrypted = Crypt::decryptString($usuario[0]->senha);
 //            dd($decrypted);
             if($senha === $decrypted){
 //                dd('teste');
-                Auth::loginUsingId($usuario->codigo, false);
+                Auth::loginUsingId($usuario[0]->codigo, false);
                 return redirect('home');
             }
 

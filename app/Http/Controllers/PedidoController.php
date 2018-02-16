@@ -78,17 +78,16 @@ class PedidoController extends Controller
             $mensagem = '';
             $flag = true;
             if ($request->input('codigo') != null) {
-                if ($request->input('codigo') == 0) {
+                if ((int)$request->input('codigo') == 0) {
                     $pedido->entrega = 0;
                     $pedido->horario = $request->input('horas') . ":" . $request->input('minutos') . ":00";
-
                     $arquivo = "/var/www/html/asklunch/android/config.txt";
                     $array = array();
                     if (file_exists($arquivo)) {
-                        if ( 0 != filesize($arquivo)) {
+                        if (0 != filesize($arquivo)) {
                             $fp = fopen($arquivo, "r");
-                            $i=0;
-                            while (!feof ($fp)) {
+                            $i = 0;
+                            while (!feof($fp)) {
                                 $valor = fgets($fp, 4096);
                                 if ((strpos($valor, 'HORÁRIO_INÍCIO') !== FALSE) || strpos($valor, 'HORÁRIO_TÉRMINO') !== FALSE) {
                                     $result = explode("=", $valor);
@@ -98,16 +97,28 @@ class PedidoController extends Controller
 
                             }
                             fclose($fp);
-                            if( (strtotime($pedido->horario) >= strtotime($array[0])) && (strtotime($pedido->horario)<=strtotime($array[1])) ){
-                                $flag = true;
-                            }else{
-                               $mensagem = 'O Restaurante encontra-se fechado no horário informado!';
-                               $flag = false;
+                            date_default_timezone_set('America/Sao_Paulo');
+                            $horaAtual = date("H:i");
+//
+                            if ((strtotime($pedido->horario) >= strtotime($array[0])) && (strtotime($pedido->horario) <= strtotime($array[1]))) {
+                                //dd((strtotime($pedido->horario)).'<br>'.(strtotime($horaAtual)));
+                                if ((strtotime($pedido->horario) >= strtotime($horaAtual))) {
+
+                                    $flag=true;
+                                }else{
+                                    $mensagem = 'Horário inválido! O horário informado deve ser maior que o horário atual!';
+                                    $flag = false;
+                                }
+
+
+                            } else {
+                                $mensagem = 'O Restaurante encontra-se fechado no horário informado!';
+                                $flag = false;
                             }
                         }
                     }
-//                echo $pedido->logradouro;
-                } else {
+                }else{
+
                     $pedido->entrega = 1;
                     $pedido->horario = "00:00:00";
                 }
@@ -373,29 +384,24 @@ class PedidoController extends Controller
 
                         }
                         fclose($fp);
-                        $horaAtual = date("H:i:s");
+                        date_default_timezone_set('America/Sao_Paulo');
+                        $horaAtual = date("H:i");
+//
+                        if ((strtotime($pedido->horario) >= strtotime($array[0])) && (strtotime($pedido->horario) <= strtotime($array[1]))) {
+                            //dd((strtotime($pedido->horario)).'<br>'.(strtotime($horaAtual)));
+                            if ((strtotime($pedido->horario) >= strtotime($horaAtual))) {
 
-//                        if ((strtotime($pedido->horario) <= strtotime($array[0])) && (strtotime($pedido->horario) <= strtotime($array[1]))) {
-//                            $flag = true;
-//                        } else {
-//                            $mensagem = 'O Restaurante encontra-se fechado no horário informado!';
-//                            $flag = false;
-//                        }
-//                        if ((strtotime($pedido->horario) >= strtotime($array[0])) && (strtotime($pedido->horario) <= strtotime($array[1]))) {
-//                            //$flag=true;
-//                            if ((strtotime($horaAtual) <= strtotime($array[0])) && (strtotime($horaAtual) >= strtotime($array[1]))) {
-//
-//                                $flag=true;
-//                            }else{
-//                                $mensagem = 'O Restaurante encontra-se fechado no horário informado 1!';
-//                                $flag = false;
-//                            }
-//
-//
-//                        } else {
-//                            $mensagem = 'O Restaurante encontra-se fechado no horário informado 2!';
-//                            $flag = false;
-//                        }
+                                $flag=true;
+                            }else{
+                                $mensagem = 'Horário inválido! O horário informado deve ser maior que o horário atual!';
+                                $flag = false;
+                            }
+
+
+                        } else {
+                            $mensagem = 'O Restaurante encontra-se fechado no horário informado!';
+                            $flag = false;
+                        }
                     }
                 }
             }else{

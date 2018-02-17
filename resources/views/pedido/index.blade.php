@@ -131,6 +131,11 @@
                                         {{--</td>--}}
                                         {{--<td>{{$c->entregador}}</td>--}}
                                         <td align="center">
+                                            @if($c->status === 'Finalizado' || $c->status === 'Extraviado' || $c->status === 'Extraviado Recriado' || $c->status === 'Cancelado')
+                                            <a href="{{route('pedido.show',$c->codigo)}}" class="btn btn-small btn-info">
+                                                <i class="fa fa-search-plus"></i>
+                                            </a>
+                                            @elseif($c->status !== 'Finalizado' && $c->status !== 'Extraviado' && $c->status !== 'Extraviado Recriado' &&  $c->status !== 'Cancelado')
                                             <a href="{{route('pedido.show',$c->codigo)}}" class="btn btn-small btn-info">
                                                 <i class="fa fa-search-plus"></i>
                                             </a>
@@ -164,6 +169,7 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            @endif
                                         </td>
 
                                         {{--<td align="center" id="tdcheck"><input name="status" type="checkbox" id="{{$c->codigo}}" value="Ativo" {{ "Ativo" === (isset($c->status_pedido) ? $c->status_pedido : '' ) ? 'checked' : '' }}></td>--}}

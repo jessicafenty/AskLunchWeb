@@ -277,7 +277,7 @@ class PedidoController extends Controller
                     Session::flash('mensagemErro', $mensagem);
                 }
             } else {
-                Session::flash('mensagemErro', 'Favor escolher uma OPÇÃO!');
+                Session::flash('mensagemErro', 'Favor escolher uma OPÇÃO: Entrega ou Retirada');
             }
 
         }catch (\Exception $exception){
@@ -311,7 +311,9 @@ class PedidoController extends Controller
         INNER JOIN Categoria_Marmita ON (Marmita.cod_categoria = Categoria_Marmita.codigo)
         WHERE Pedido.codigo = ".$id." AND Cliente.codigo = ".$codCliente));
 //        WHERE DATE (Pedido.data_pedido) = '".$data."' AND Cliente.codigo = ".$codCliente));
-
+        $bebidas = DB::select(DB::raw("SELECT Bebida.descricao, Bebida_Venda.qtd, Bebida.quantidade FROM Bebida INNER JOIN Bebida_Venda ON
+(Bebida.codigo = Bebida_Venda.cod_bebida) INNER JOIN Pedido ON 
+(Bebida_Venda.cod_pedido = Pedido.codigo) WHERE Bebida_Venda.cod_pedido = ".$pedido->codigo));
 
 
 //        dd($usuario->email);
@@ -321,7 +323,8 @@ class PedidoController extends Controller
             ->with('pedido',$pedido)
             ->with('cliente',$cliente)
             ->with('usuario',$usuario)
-            ->with('marmitas',$marmitas);
+            ->with('marmitas',$marmitas)
+            ->with('bebidas',$bebidas);
     }
 
     /**
@@ -334,22 +337,27 @@ class PedidoController extends Controller
     {
 
         $pedido = Pedido::findOrFail($id);
-        $formapagamento = FormaPagamento::where('inativo','=','0')->get();
-        $cliente = Funcionario::where('inativo','=','0')->get();
-        $horario = explode(":", $pedido->horario);
-        $horas = (int) $horario[0];
-        $minutos = (int) $horario[1];
-        $marmitasGrandes = Marmita::where('cod_pedido','=',$pedido->codigo)->where('cod_categoria','=',1)->get();
-        $marmitasPequenas = Marmita::where('cod_pedido','=',$pedido->codigo)->where('cod_categoria','=',2)->get();
-        //dd(sizeof($marmitas));
-        $itens = Item::where('status_item','=','Ativo')->where('inativo','=','0')->get();
-        $bebidasPedido = BebidaVenda::where('cod_pedido','=',$pedido->codigo)->where('inativo','=','0')->get();
-        $bebidas = Bebida::where('inativo','=','0')->get();
-        $categoriaGrande = Categoria::where('tamanho','Grande')->first();
-        $categoriaPequena = Categoria::where('tamanho','Pequena')->first();
-        return view('pedido.edit', compact('pedido','formapagamento',
-            'cliente', 'horas', 'minutos', 'marmitasGrandes', 'marmitasPequenas', 'bebidas','itens','bebidasPedido',
-            'categoriaGrande','categoriaPequena'));
+        if($pedido->status === 'Finalizado' || $pedido->status === 'Extraviado' || $pedido->status === 'Extraviado Recriado' || $pedido->status === 'Cancelado'){
+            Session::flash('mensagemErro', 'Operação não permitida!');
+            return redirect()->back();
+        }else {
+            $formapagamento = FormaPagamento::where('inativo', '=', '0')->get();
+            $cliente = Funcionario::where('inativo', '=', '0')->get();
+            $horario = explode(":", $pedido->horario);
+            $horas = (int)$horario[0];
+            $minutos = (int)$horario[1];
+            $marmitasGrandes = Marmita::where('cod_pedido', '=', $pedido->codigo)->where('cod_categoria', '=', 1)->get();
+            $marmitasPequenas = Marmita::where('cod_pedido', '=', $pedido->codigo)->where('cod_categoria', '=', 2)->get();
+            //dd(sizeof($marmitas));
+            $itens = Item::where('status_item', '=', 'Ativo')->where('inativo', '=', '0')->get();
+            $bebidasPedido = BebidaVenda::where('cod_pedido', '=', $pedido->codigo)->where('inativo', '=', '0')->get();
+            $bebidas = Bebida::where('inativo', '=', '0')->get();
+            $categoriaGrande = Categoria::where('tamanho', 'Grande')->first();
+            $categoriaPequena = Categoria::where('tamanho', 'Pequena')->first();
+            return view('pedido.edit', compact('pedido', 'formapagamento',
+                'cliente', 'horas', 'minutos', 'marmitasGrandes', 'marmitasPequenas', 'bebidas', 'itens', 'bebidasPedido',
+                'categoriaGrande', 'categoriaPequena'));
+        }
     }
 
     /**
@@ -596,42 +604,58 @@ class PedidoController extends Controller
                         }
 
                         $arrCodBebidas = [];
+//dd($fields);
                         foreach ($fields as $name => $value) {
                             if (ends_with($name, 'B')) {
                                 $arrBebidas = explode("-", $name);
                                 if ($value != null) {
                                     $b = BebidaVenda::where('cod_pedido', '=', $pedido->codigo)
-                                        ->where('codigo', '=', $arrBebidas[0])->first();
+                                        ->where('cod_bebida', '=', $arrBebidas[0])->first();
                                     if ($b) {
+//                                        dd('aq'.$b->codigo);
                                         $bebida = BebidaVenda::find($b->codigo);
                                         $bebida->cod_bebida = $arrBebidas[0];
                                         $valorBebida = Bebida::where('codigo', '=', $bebida->cod_bebida)->first();
                                         $bebida->valor_unitario = $valorBebida->valor;
                                         $bebida->qtd = $value;
                                         $bebida->cod_pedido = $pedido->codigo;
-                                        $bebida->update();
+                                        if($bebida->qtd == 0){
+                                            $bebida->delete();
+                                        }else{
+
+                                            $bebida->update();
+                                        }
                                         $arrCodBebidas[$i] = $bebida->codigo;
                                     } else {
-                                        $bebida = new BebidaVenda();
-                                        $bebida->cod_bebida = $arrBebidas[0];
-                                        $valorBebida = Bebida::where('codigo', '=', $bebida->cod_bebida)->first();
-                                        $bebida->valor_unitario = $valorBebida->valor;
-                                        $bebida->qtd = $value;
-                                        $bebida->cod_pedido = $pedido->codigo;
-                                        $bebida->save();
-                                        $arrCodBebidas[$i] = $bebida->codigo;
+                                        if($value!= 0){
+                                            $bebida = new BebidaVenda();
+                                            $bebida->cod_bebida = $arrBebidas[0];
+                                            $valorBebida = Bebida::where('codigo', '=', $bebida->cod_bebida)->first();
+                                            $bebida->valor_unitario = $valorBebida->valor;
+                                            $bebida->qtd = $value;
+                                            $bebida->cod_pedido = $pedido->codigo;
+                                            $bebida->save();
+                                            $arrCodBebidas[$i] = $bebida->codigo;
+                                        }
+
                                     }
+                                }else{
+                                    $b = BebidaVenda::where('cod_pedido', '=', $pedido->codigo)
+                                        ->where('cod_bebida', '=', $arrBebidas[0])->first();
+                                    $bebida = BebidaVenda::find($b->codigo);
+                                    $bebida->delete();
                                 }
                             }
                         }
-                        $drinks = BebidaVenda::where('cod_pedido', '=', $pedido->codigo)->get();
-                        for ($y = 0; $y < sizeof($drinks); $y++) {
-
-                            if (!in_array($drinks[$y]['codigo'], $arrCodBebidas)) {
-                                BebidaVenda::where('cod_pedido', '=', $pedido->codigo)
-                                    ->where('codigo', '=', $drinks[$y]['codigo'])->delete();
-                            }
-                        }
+                        //dd($arrCodBebidas);
+//                        $drinks = BebidaVenda::where('cod_pedido', '=', $pedido->codigo)->get();
+//                        for ($y = 0; $y < sizeof($drinks); $y++) {
+//
+//                            if (!in_array($drinks[$y]['codigo'], $arrCodBebidas)) {
+//                                BebidaVenda::where('cod_pedido', '=', $pedido->codigo)
+//                                    ->where('codigo', '=', $drinks[$y]['codigo'])->delete();
+//                            }
+//                        }
 
 
                         Session::flash('mensagem', 'Pedido atualizado com sucesso!');

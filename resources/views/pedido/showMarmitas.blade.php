@@ -55,7 +55,14 @@
                             <div style="border-style: solid; padding: 5px;border-color: white; font-size: large" id="itens">
                                 {{--<strong>Teste</strong><br>--}}
                             </div>
-
+                            @if(!empty($bebidas))
+                                <h3 style="background-color: white; text-align: center">Bebidas</h3>
+                                <div style="border-style: solid; padding: 5px;border-color: white; font-size: large" id="itens">
+                                        @foreach($bebidas as $b)
+                                            <p>{{$b->descricao." (".$b->quantidade.") - ".$b->qtd." un."}}</p>
+                                        @endforeach
+                                </div>
+                            @endif
                         </div>
                         <a href="{{route('pedido.recebido')}}" class="btn btn-small btn-primary pull-right btn-lg" style="float: right">
                             Voltar

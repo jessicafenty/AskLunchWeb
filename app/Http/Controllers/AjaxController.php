@@ -82,14 +82,14 @@ class AjaxController extends Controller
         $pedido = Pedido::findOrFail($id);
         $pedido->status = 'Cancelado';
         $pedido->update();
-        return redirect('pedidosProntos');
+        return redirect()->back();
     }
     public function alterarStatusFinalizar($id)
     {
         $pedido = Pedido::findOrFail($id);
         $pedido->status = 'Finalizado';
         $pedido->update();
-        return redirect('pedidosRota');
+        return redirect()->back();
     }
     public function alterarStatusExtraviado($id)
     {
@@ -101,7 +101,7 @@ class AjaxController extends Controller
     public function restaurarPedidoFinalizado($id)
     {
         $pedido = Pedido::findOrFail($id);
-        $pedido->status = 'Pronto';
+        $pedido->status = 'Recebido';
         $pedido->entregador = 'Padrão';
         $pedido->update();
         return redirect('pedidosFinalizados');
@@ -158,7 +158,11 @@ INNER JOIN Categoria_Marmita ON (Marmita.cod_categoria = Categoria_Marmita.codig
 WHERE Pedido.codigo = ".$id." AND Cliente.codigo = ".$codCliente));
 //WHERE DATE (Pedido.data_pedido) = '".$data."' AND Cliente.codigo = ".$codCliente));
 
-        return view('pedido.showMarmitas', compact('marmitas'));
+        $bebidas = DB::select(DB::raw("SELECT Bebida.descricao, Bebida_Venda.qtd, Bebida.quantidade FROM Bebida INNER JOIN Bebida_Venda ON
+(Bebida.codigo = Bebida_Venda.cod_bebida) INNER JOIN Pedido ON 
+(Bebida_Venda.cod_pedido = Pedido.codigo) WHERE Bebida_Venda.cod_pedido = ".$pedido->codigo));
+
+        return view('pedido.showMarmitas', compact('marmitas'), compact('bebidas'));
     }
     public function showItens($id)
     {

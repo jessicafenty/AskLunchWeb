@@ -50,6 +50,7 @@
                                             <option value="Aniversariantes">Aniversariantes de um mês específico</option>
                                             <option value="totalMarmitasMes">Total de marmitas vendidas de um mês específico</option>
                                             <option value="totalMarmitasDia">Total de vendas de marmitas do dia</option>
+                                            <option value="totalMarmitasPeriodo">Total de vendas de marmitas de um período específico</option>
                                             {{--<option value="marmitasCliente">Descrição de marmitas dos clientes</option>--}}
                                         </select>
                                     </div>
@@ -119,6 +120,11 @@
                     $('#mes').attr('disabled', 'disabled');
                 }
                 if (str.localeCompare("Pedidos por Status")===0){
+                    $('#dataInicial').removeAttr('disabled');
+                    $('#dataFinal').removeAttr('disabled');
+                    $('#mes').attr('disabled', 'disabled');
+                }
+                if (str.localeCompare("totalMarmitasPeriodo")===0){
                     $('#dataInicial').removeAttr('disabled');
                     $('#dataFinal').removeAttr('disabled');
                     $('#mes').attr('disabled', 'disabled');

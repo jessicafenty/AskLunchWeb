@@ -7,6 +7,14 @@
 @section('contentheader_title')
     Cadastrar Pedido
 @endsection
+<style>
+    #map {
+        height: 65%;
+        width: 100%;
+        margin: auto;
+        text-align: center;
+    }
+</style>
 
 
 @section('main-content')
@@ -220,8 +228,11 @@
                                            value="{{old('lote')}}" placeholder="Lote">
                                 </div>
                             </div>
+                                <div class="form-group" id="map"></div>
+                                <input type="hidden" value="" id="inputHiddenCoordenadas" name="ihcoordenadas">
                             </div>
-                            <input type="hidden" id="coordenadas" name="coordenadas">
+
+                            {{--<input type="hidden" id="coordenadas" name="coordenadas">--}}
 
                             <div class="form-group" id="divRetirada">
                                 <label for="idOpcao" class="control-label col-sm-2">Horário</label>
@@ -520,9 +531,28 @@
                         $('#inputNumero').attr('value', obj.numero);
                         $('#inputQuadra').attr('value', obj.quadra);
                         $('#inputLote').attr('value', obj.lote);
-                        $('#coordenadas').attr('value', obj.coordenadas);
+                        $('#inputHiddenCoordenadas').attr('value', obj.coordenadas);
+                        initMap();
                     });
                 }
+            });
+            $("#cliente").change(function(){
+                $.ajax({
+                    url:'../../enderecoCliente/'+$('#cliente').val(),
+                    type:'GET',
+                    dataType:'json',
+                    success: function(result){
+                        $.each(JSON.parse(result), function (i, obj) {
+                            $('#inputLogradouro').attr('value', obj.logradouro);
+                            $('#inputBairro').attr('value', obj.bairro);
+                            $('#inputNumero').attr('value', obj.numero);
+                            $('#inputQuadra').attr('value', obj.quadra);
+                            $('#inputLote').attr('value', obj.lote);
+                            $('#inputHiddenCoordenadas').attr('value', obj.coordenadas);
+                            initMap();
+                        });
+                    }
+                });
             });
             $("#entrega").click(function(){
                 $("#cliente").change(function(){
@@ -537,7 +567,8 @@
                                 $('#inputNumero').attr('value', obj.numero);
                                 $('#inputQuadra').attr('value', obj.quadra);
                                 $('#inputLote').attr('value', obj.lote);
-                                $('#coordenadas').attr('value', obj.coordenadas);
+                                $('#inputHiddenCoordenadas').attr('value', obj.coordenadas);
+                                initMap();
                             });
                         }
                     });
@@ -553,6 +584,111 @@
                 $('#divEntrega').hide();
                 $('#codigo').attr('value', '0');
             });
+            var $logradouro = $('#inputLogradouro');
+            var $bairro = $('#inputBairro');
+            var $numero = $('#inputNumero');
+            $logradouro.on('keyup', function () {
+                clearTimeout(typingTimer);
+                typingTimer = setTimeout(initMap, doneTypingInterval);
+            });
+
+            //on keydown, clear the countdown
+            $logradouro.on('keydown', function () {
+                clearTimeout(typingTimer);
+            });
+
+            $bairro.on('keyup', function () {
+                clearTimeout(typingTimer);
+                typingTimer = setTimeout(initMap, doneTypingInterval);
+            });
+
+            //on keydown, clear the countdown
+            $bairro.on('keydown', function () {
+                clearTimeout(typingTimer);
+            });
+
+            //on keyup, start the countdown
+            $numero.on('keyup', function () {
+//            if($logradouro.val() !== null
+//                && $bairro.val() !== null
+//                && $numero.val() !== null){
+                clearTimeout(typingTimer);
+                typingTimer = setTimeout(initMap, doneTypingInterval);
+//            }
+            });
+
+            //on keydown, clear the countdown
+            $numero.on('keydown', function () {
+                clearTimeout(typingTimer);
+            });
+
+            function initMap() {
+
+                var restaurante = {lat: -17.887522, lng: -51.714028};
+                var map = new google.maps.Map(document.getElementById('map'), {
+                    zoom: 18,
+                    center: restaurante
+                });
+                var marker = new google.maps.Marker({
+                    position: restaurante,
+                    map: map,
+                    draggable: true
+                });
+                marker.addListener('dragend', function() {
+                    map.setZoom(18);
+                    map.setCenter(marker.getPosition());
+//                alert(marker.position);
+                    $('#inputHiddenCoordenadas').attr('value', marker.position);
+
+                });
+                var addressInput = $logradouro.val()+','+$bairro.val()+','+$numero.val();
+
+//            var map = document.getElementById('map');
+
+                var geocoder = new google.maps.Geocoder();
+
+                geocoder.geocode({address: addressInput}, function (results, status) {
+
+                    if (status == google.maps.GeocoderStatus.OK) {
+
+                        var myResult = results[0].geometry.location; // referência ao valor LatLng
+
+                        createMarker(myResult, marker, map); // adicionar chamada à função que adiciona o marcador
+
+                        map.setCenter(myResult);
+
+                        map.setZoom(17);
+
+                    }
+                });
+
+            }
+            function createMarker(latlng, marker, map) {
+
+                // Se o utilizador efetuar outra pesquisa é necessário limpar a variável marker
+                if(marker != undefined && marker != ''){
+                    marker.setMap(null);
+                    marker = '';
+                }
+
+                marker = new google.maps.Marker({
+                    map: map,
+                    position: latlng,
+                    draggable: true
+                });
+                marker.addListener('dragend', function() {
+                    map.setZoom(18);
+                    map.setCenter(marker.getPosition());
+//                alert(marker.position);
+                    $('#inputHiddenCoordenadas').attr('value', marker.position);
+
+                });
+
+                //return marker;
+
+            }
+            google.maps.event.addDomListener(window, "load", initMap);
+
         });
     </script>
 @endsection

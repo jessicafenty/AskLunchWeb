@@ -129,7 +129,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group" id="map"></div>
-                                <input type="hidden" value="" id="inputHiddenCoordenadas" name="ihcoordenadas">
+                                <input type="hidden" value="{{$funcionario->coordenadas}}" id="inputHiddenCoordenadas" name="ihcoordenadas">
                             </fieldset>
                             <fieldset>
                                 <legend>Usuário</legend>
@@ -295,7 +295,14 @@
                 position: latlng,
                 draggable: true
             });
-            $('#inputHiddenCoordenadas').attr('value', marker.position);
+            marker.addListener('dragend', function() {
+                map.setZoom(18);
+                map.setCenter(marker.getPosition());
+//                alert(marker.position);
+                $('#inputHiddenCoordenadas').attr('value', marker.position);
+
+            });
+//            $('#inputHiddenCoordenadas').attr('value', marker.position);
 
             //return marker;
 

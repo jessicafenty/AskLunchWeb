@@ -268,6 +268,7 @@
 
                 }
             });
+            $('#inputHiddenCoordenadas').attr('value', marker.position);
 
         }
         function createMarker(latlng, marker, map) {
@@ -282,6 +283,13 @@
                 map: map,
                 position: latlng,
                 draggable: true
+            });
+            marker.addListener('dragend', function() {
+                map.setZoom(18);
+                map.setCenter(marker.getPosition());
+//                alert(marker.position);
+                $('#inputHiddenCoordenadas').attr('value', marker.position);
+
             });
             $('#inputHiddenCoordenadas').attr('value', marker.position);
 

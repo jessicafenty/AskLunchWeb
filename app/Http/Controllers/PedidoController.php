@@ -187,7 +187,10 @@ class PedidoController extends Controller
                         $text = "Favor informar a quadra!";
                     }
                     if ($var) {
-                        $pedido->coordenadas = $request->input('coordenadas');
+//                        $pedido->coordenadas = $request->input('coordenadas');
+                        $caracteres = array('(', ')', ' ');
+                        $varCoordenadas = str_replace($caracteres, '', $request->input('ihcoordenadas'));
+                        $pedido->coordenadas = $varCoordenadas;
                         $pedido->status = "Recebido";
                         $pedido->entregador = "Padrão";
                         $pedido->save();
@@ -475,7 +478,11 @@ class PedidoController extends Controller
                         $text = "Favor informar a quadra!";
                     }
                     if ($var) {
-                        $pedido->coordenadas = $request->input('coordenadas');
+//                        $pedido->coordenadas = $request->input('coordenadas');
+                        $caracteres = array('(', ')', ' ');
+                        $varCoordenadas = str_replace($caracteres, '', $request->input('ihcoordenadas'));
+                        $pedido->coordenadas = $varCoordenadas;
+
                         $pedido->status = "Recebido";
                         $pedido->entregador = "Padrão";
                         $pedido->update();

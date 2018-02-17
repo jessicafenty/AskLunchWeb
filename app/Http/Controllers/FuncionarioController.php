@@ -116,9 +116,13 @@ class FuncionarioController extends Controller
                     $usuario = new Usuario();
                     $usuario->email = $request->input('email');
 //                $usuario->senha = bcrypt($request->input('senha'));
-                    $encrypted = Crypt::encryptString($request->input('senha'));
-                    $usuario->senha = $encrypted;
                     $usuario->tipo = $request->input('tipo');
+                    if($usuario->tipo === 'Entregador'){
+                        $usuario->senha = $request->input('senha');
+                    }else{
+                        $encrypted = Crypt::encryptString($request->input('senha'));
+                        $usuario->senha = $encrypted;
+                    }
 
                     $usuario->funcionario()->associate($funcionario);
 
@@ -230,9 +234,13 @@ class FuncionarioController extends Controller
                     $usuario = Usuario::where('cod_cliente', $id)->first();
                     $usuario->email = $request->input('email');
 //                $usuario->senha = bcrypt($request->input('senha'));
-                    $encrypted = Crypt::encryptString($request->input('senha'));
-                    $usuario->senha = $encrypted;
                     $usuario->tipo = $request->input('tipo');
+                    if($usuario->tipo === 'Entregador'){
+                        $usuario->senha = $request->input('senha');
+                    }else{
+                        $encrypted = Crypt::encryptString($request->input('senha'));
+                        $usuario->senha = $encrypted;
+                    }
 
                     $usuario->funcionario()->associate($funcionario);
 

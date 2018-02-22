@@ -431,7 +431,7 @@ class PedidoController extends Controller
                         $pedido->troco = $request->troco;
                     }
                     $pedido->cod_forma_pagamento = $request->input('pagamento');
-                    $pedido->cod_cliente = $request->input('cliente');
+//                    $pedido->cod_cliente = $request->input('cliente');
                     $pedido->logradouro = $request->logradouro;
                     $pedido->bairro = $request->bairro;
                     if ($request->numero === null) {

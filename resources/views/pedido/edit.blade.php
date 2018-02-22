@@ -274,6 +274,8 @@
     <script type="text/javascript">
         $(document).ready(function () {
 
+
+            $('#cliente').attr('disabled', 'disabled');
             if($('#inputQtdGrande').val() === '0'){
                 $('#inputQtdGrande').attr('disabled', 'disabled');
             }else{

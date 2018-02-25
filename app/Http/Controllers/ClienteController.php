@@ -6,6 +6,7 @@ use App\Funcionario;
 use App\Http\Requests\FuncionarioRequest;
 use App\Usuario;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
 class ClienteController extends Controller
@@ -249,9 +250,18 @@ class ClienteController extends Controller
     public function destroy($id)
     {
         $cliente =  Funcionario::findOrFail($id);
-        $cliente->inativo = 1;
-        $cliente->update();
-        Usuario::where('cod_cliente', $id)->update(['inativo' => 1]);
+        $var = DB::select(DB::raw("SELECT * FROM Pedido INNER JOIN Cliente ON (Pedido.cod_cliente = Cliente.codigo)
+WHERE Cliente.codigo = ".$cliente->codigo." AND (Pedido.status <> 'Finalizado' AND Pedido.status <> 'Cancelado' AND Pedido.status <> 'Extraviado' AND Pedido.status <> 'Extraviado Recriado')"));
+        if( empty($var)){
+//            Session::flash('mensagemErro', 'pode');
+            $cliente->inativo = 1;
+            $cliente->update();
+            Usuario::where('cod_cliente', $id)->update(['inativo' => 1]);
+        }else{
+            Session::flash('mensagemErro', 'Este cliente não pode ser excluído, pois possui pedidos não finalizados vinculados a ele!');
+        }
+//        dd($var);
+
         return redirect('/cliente');
     }
 }

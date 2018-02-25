@@ -6,6 +6,7 @@ use App\Funcionario;
 use App\Http\Requests\FuncionarioRequest;
 use App\Usuario;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
 class FuncionarioController extends Controller
@@ -267,9 +268,17 @@ class FuncionarioController extends Controller
     public function destroy($id)
     {
         $funcionario =  Funcionario::findOrFail($id);
-        $funcionario->inativo = 1;
-        $funcionario->update();
-        Usuario::where('cod_cliente', $id)->update(['inativo' => 1]);
+        $var = DB::select(DB::raw("SELECT Pedido.* FROM Pedido INNER JOIN Cliente ON (Pedido.cod_cliente = Cliente.codigo)
+WHERE Pedido.entregador = '".$funcionario->nome."' AND Pedido.status = 'Em Rota'"));
+        if( empty($var)){
+//            Session::flash('mensagemErro', 'pode');
+            $funcionario->inativo = 1;
+            $funcionario->update();
+            Usuario::where('cod_cliente', $id)->update(['inativo' => 1]);
+        }else{
+            Session::flash('mensagemErro', 'Este funcionário não pode ser excluído, pois possui pedidos não finalizados vinculados a ele!');
+        }
+
         return redirect('/funcionario');
     }
 }

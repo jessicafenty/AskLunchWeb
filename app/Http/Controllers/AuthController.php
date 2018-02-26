@@ -72,14 +72,20 @@ AND (tipo = 'Administrador' OR tipo = 'Padrão')"));
             $usuario = Usuario::join('Cliente', 'Usuario.cod_cliente', 'Cliente.codigo')->
             where('email', $request->email)->first();
             if(isset($usuario)) {
-                $decrypted = Crypt::decryptString($usuario->senha);
-                $data = array('nome' => $usuario->nome, 'senha' => $decrypted);
-                Mail::send('auth.mensagem', $data , function ($message) use ($usuario) {
-                    $message->to($usuario->email)->subject
-                    ('AskLunchWeb - Recuperação de Senha');
-                });
-                Session::flash('mensagemOK', "Operação realizada com sucesso! Verifique seu email.");
-                return redirect()->route('auth.login');
+                if($usuario->tipo != 'Cliente' && $usuario->tipo != 'Entregador') {
+                    $decrypted = Crypt::decryptString($usuario->senha);
+                    $data = array('nome' => $usuario->nome, 'senha' => $decrypted);
+                    Mail::send('auth.mensagem', $data, function ($message) use ($usuario) {
+                        $message->to($usuario->email)->subject
+                        ('AskLunchWeb - Recuperação de Senha');
+                    });
+                    Session::flash('mensagemOK', "Operação realizada com sucesso! Verifique seu email.");
+                    return redirect()->route('auth.login');
+                }else{
+                    return redirect()->back()
+                        ->with('mensagem', 'Email não cadastrado!')
+                        ->withInput();
+                }
             }else{
                 return redirect()->back()
                     ->with('mensagem', 'Email não cadastrado!')
